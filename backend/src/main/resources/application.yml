@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/saferoute
     username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    password: ${DB_PASSWORD:fm136}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -16,7 +16,13 @@ spring:
     show-sql: true
 
 tmap:
-  app-key: ${TMAP_APP_KEY}
+  app-key: ${TMAP_APP_KEY:S5jlB4eKpe9JFTom4T3ye1KWm88A2ck667teasl8}
 
 kakao:
-  rest-api-key: ${KAKAO_REST_API_KEY}
+  rest-api-key: ${KAKAO_REST_API_KEY:6a31669752a108094baf920035833d89}
+
+opendata:
+  security-light-stats-key: ${DATA_SECURITY_LIGHT_STATS_KEY:7d9420298e63457bafea6a8b18615c4e}
+  streetlight-stats-key: ${DATA_STREETLIGHT_STATS_KEY:49a97b1bb14a438e838461d57b0fc61b}
+  cctv-key: ${DATA_CCTV_KEY:79f26d1b8d004013b64708bb4f9922fa}
+  security-light-location-key: ${DATA_SECURITY_LIGHT_LOCATION_KEY:1724c503a2f9451dbf70957e1719c5d3}

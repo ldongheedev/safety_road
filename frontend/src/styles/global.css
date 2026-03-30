@@ -13,16 +13,24 @@ html, body, #root {
   height: 100%;
 }
 
-/* ── SearchBar ── */
-.search-bar {
+/* ── Side Panel (통합 좌측 패널) ── */
+.side-panel {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 10;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: calc(100vh - 20px);
+}
+
+/* ── SearchBar ── */
+.search-bar {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 340px;
   background: #fff;
   border-radius: 12px;
   padding: 12px;
@@ -117,11 +125,7 @@ html, body, #root {
 
 /* ── Search Route Button ── */
 .btn-search-route {
-  position: absolute;
-  top: 130px;
-  left: 10px;
-  z-index: 10;
-  width: 340px;
+  width: 100%;
   height: 44px;
   border: none;
   border-radius: 8px;
@@ -149,10 +153,6 @@ html, body, #root {
 
 /* ── Route Error ── */
 .route-error {
-  position: absolute;
-  top: 185px;
-  left: 10px;
-  z-index: 10;
   padding: 8px 16px;
   background: #fff0f0;
   color: #d32f2f;
@@ -161,30 +161,23 @@ html, body, #root {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ── Route Result Panel ── */
-.route-panel {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
+/* ── Route Result ── */
+.route-result {
   background: #fff;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.12);
-  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  overflow-y: auto;
+  max-height: calc(100vh - 230px);
 }
 
 .route-list {
   display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .route-card {
-  flex-shrink: 0;
-  width: 160px;
   padding: 12px;
   border: 2px solid #eee;
   border-radius: 12px;
@@ -251,19 +244,185 @@ html, body, #root {
   color: #666;
 }
 
+/* ── Danger Zone Toggle Button ── */
+.btn-danger-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  padding: 10px 16px;
+  border: 2px solid #d32f2f;
+  border-radius: 8px;
+  background: #fff;
+  color: #d32f2f;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s;
+}
+
+.btn-danger-toggle--active {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.btn-danger-toggle:hover {
+  opacity: 0.85;
+}
+
+/* ── SOS Floating Button ── */
+.sos-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  background: #d32f2f;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(211, 47, 47, 0.45);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sos-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 24px rgba(211, 47, 47, 0.55);
+}
+
+/* ── SOS Modal Overlay ── */
+.sos-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.sos-modal {
+  width: 320px;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.sos-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #d32f2f;
+  margin-bottom: 8px;
+}
+
+.sos-desc {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.sos-count {
+  font-weight: 700;
+  color: #d32f2f;
+  font-size: 16px;
+}
+
+/* ── SOS Progress Ring ── */
+.sos-progress-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 24px;
+}
+
+.sos-progress-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.sos-ring-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 8;
+}
+
+.sos-ring-fg {
+  fill: none;
+  stroke: #d32f2f;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: calc(2 * 3.14159 * 52);
+  transition: stroke-dashoffset 1s linear;
+}
+
+.sos-ring-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #d32f2f;
+}
+
+/* ── SOS Action Buttons ── */
+.sos-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.sos-btn-cancel,
+.sos-btn-now {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sos-btn-cancel {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.sos-btn-cancel:hover {
+  background: #e0e0e0;
+}
+
+.sos-btn-now {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.sos-btn-now:hover {
+  background: #b71c1c;
+}
+
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  .search-bar {
+  .side-panel {
     width: 90%;
     left: 5%;
   }
 
-  .btn-search-route {
-    width: 90%;
-    left: 5%;
-  }
-
-  .route-card {
-    width: 140px;
+  .sos-fab {
+    bottom: 16px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    font-size: 16px;
   }
 }

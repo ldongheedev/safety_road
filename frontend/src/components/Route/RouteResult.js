@@ -2,7 +2,7 @@ export default function RouteResult({ routes, selectedRouteId, onSelectRoute }) 
   if (!routes.length) return null;
 
   return (
-    <div className="route-panel">
+    <div className="route-result">
       <div className="route-list">
         {routes.map((route) => {
           const isSelected = route.routeId === selectedRouteId;

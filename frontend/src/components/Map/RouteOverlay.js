@@ -8,11 +8,10 @@ export default function RouteOverlay({ map, routes, selectedRouteId }) {
     polylinesRef.current.forEach((pl) => pl.setMap(null));
     polylinesRef.current = [];
 
-    if (!map || !routes.length) return;
+    const kakao = window.kakao;
+    if (!map || !routes.length || !kakao) return;
 
-    const Tmapv2 = window.Tmapv2;
-
-    // 선택되지 않은 경로 먼저 그리고, 선택된 경로를 위에 그림
+    // 선택된 경로를 마지막에 그려서 위에 표시
     const sorted = [...routes].sort((a, b) => {
       if (a.routeId === selectedRouteId) return 1;
       if (b.routeId === selectedRouteId) return -1;
@@ -35,17 +34,18 @@ export default function RouteOverlay({ map, routes, selectedRouteId }) {
       }
 
       const path = route.coordinates.map(
-        ([lat, lng]) => new Tmapv2.LatLng(lat, lng)
+        ([lat, lng]) => new kakao.maps.LatLng(lat, lng)
       );
 
-      const polyline = new Tmapv2.Polyline({
+      const polyline = new kakao.maps.Polyline({
         path,
         strokeColor,
         strokeWeight,
         strokeOpacity: isSelected ? 1 : 0.6,
-        map,
+        strokeStyle: 'solid',
       });
 
+      polyline.setMap(map);
       polylinesRef.current.push(polyline);
     });
 
@@ -57,20 +57,14 @@ export default function RouteOverlay({ map, routes, selectedRouteId }) {
 }
 
 function fitBounds(map, routes) {
-  const Tmapv2 = window.Tmapv2;
-  let minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
+  const kakao = window.kakao;
+  const bounds = new kakao.maps.LatLngBounds();
 
   routes.forEach((route) => {
     route.coordinates.forEach(([lat, lng]) => {
-      if (lat < minLat) minLat = lat;
-      if (lat > maxLat) maxLat = lat;
-      if (lng < minLng) minLng = lng;
-      if (lng > maxLng) maxLng = lng;
+      bounds.extend(new kakao.maps.LatLng(lat, lng));
     });
   });
 
-  const sw = new Tmapv2.LatLng(minLat, minLng);
-  const ne = new Tmapv2.LatLng(maxLat, maxLng);
-  const bounds = new Tmapv2.LatLngBounds(sw, ne);
-  map.fitBounds(bounds, { padding: 60 });
+  map.setBounds(bounds, 60, 60, 60, 60);
 }
