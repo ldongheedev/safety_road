@@ -118,6 +118,7 @@ export default function App() {
         map={map}
         zones={dangerZones}
         visible={showDangerZones}
+        origin={origin}
       />
 
       <SOSButton />

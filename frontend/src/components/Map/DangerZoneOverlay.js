@@ -12,7 +12,30 @@ const RISK_LABEL = {
   LOW: '안전',
 };
 
-export default function DangerZoneOverlay({ map, zones, visible }) {
+const RADIUS_KM = 2;
+
+function getZoneCenter(bounds) {
+  const lats = bounds.map(([lat]) => lat);
+  const lngs = bounds.map(([, lng]) => lng);
+  return [
+    (Math.min(...lats) + Math.max(...lats)) / 2,
+    (Math.min(...lngs) + Math.max(...lngs)) / 2,
+  ];
+}
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+export default function DangerZoneOverlay({ map, zones, visible, origin }) {
   const polygonsRef = useRef([]);
   const overlaysRef = useRef([]);
 
@@ -26,7 +49,14 @@ export default function DangerZoneOverlay({ map, zones, visible }) {
     const kakao = window.kakao;
     if (!map || !zones.length || !visible || !kakao) return;
 
-    zones.forEach((zone) => {
+    const visibleZones = origin
+      ? zones.filter((zone) => {
+          const [cLat, cLng] = getZoneCenter(zone.bounds);
+          return haversineKm(origin.lat, origin.lng, cLat, cLng) <= RADIUS_KM;
+        })
+      : zones;
+
+    visibleZones.forEach((zone) => {
       const colors = RISK_COLORS[zone.riskLevel] || RISK_COLORS.MEDIUM;
       const label = RISK_LABEL[zone.riskLevel] || '보통';
 
@@ -96,7 +126,7 @@ export default function DangerZoneOverlay({ map, zones, visible }) {
     return () => {
       kakao.maps.event.removeListener(map, 'click', mapClickListener);
     };
-  }, [map, zones, visible]);
+  }, [map, zones, visible, origin]);
 
   return null;
 }
