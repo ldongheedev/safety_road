@@ -1,10 +1,23 @@
 import { useEffect, useRef } from 'react';
 
+const COLORS = {
+  safe: '#2DB400',    // 초록
+  caution: '#F5A623', // 노랑/주황
+  danger: '#D32F2F',  // 빨강
+  unknown: '#999999',
+};
+
+function getLevel(score) {
+  if (score == null) return 'unknown';
+  if (score >= 70) return 'safe';
+  if (score >= 40) return 'caution';
+  return 'danger';
+}
+
 export default function RouteOverlay({ map, routes, selectedRouteId }) {
   const polylinesRef = useRef([]);
 
   useEffect(() => {
-    // 기존 폴리라인 제거
     polylinesRef.current.forEach((pl) => pl.setMap(null));
     polylinesRef.current = [];
 
@@ -20,28 +33,31 @@ export default function RouteOverlay({ map, routes, selectedRouteId }) {
 
     sorted.forEach((route) => {
       const isSelected = route.routeId === selectedRouteId;
-      const isRecommended = route.recommended;
-
-      let strokeColor = '#999999';
-      let strokeWeight = 4;
-
-      if (isSelected) {
-        strokeColor = '#FF6B00';
-        strokeWeight = 6;
-      } else if (isRecommended) {
-        strokeColor = '#2DB400';
-        strokeWeight = 6;
-      }
+      const level = getLevel(route.safetyScore);
+      const color = COLORS[level];
 
       const path = route.coordinates.map(
         ([lat, lng]) => new kakao.maps.LatLng(lat, lng)
       );
 
+      // 선택된 경로: 뒤에 두꺼운 외곽선 효과
+      if (isSelected) {
+        const outline = new kakao.maps.Polyline({
+          path,
+          strokeColor: '#000',
+          strokeWeight: 10,
+          strokeOpacity: 0.25,
+          strokeStyle: 'solid',
+        });
+        outline.setMap(map);
+        polylinesRef.current.push(outline);
+      }
+
       const polyline = new kakao.maps.Polyline({
         path,
-        strokeColor,
-        strokeWeight,
-        strokeOpacity: isSelected ? 1 : 0.6,
+        strokeColor: color,
+        strokeWeight: isSelected ? 7 : 5,
+        strokeOpacity: isSelected ? 1 : 0.55,
         strokeStyle: 'solid',
       });
 
@@ -49,7 +65,6 @@ export default function RouteOverlay({ map, routes, selectedRouteId }) {
       polylinesRef.current.push(polyline);
     });
 
-    // 지도 범위 자동 조정
     fitBounds(map, routes);
   }, [map, routes, selectedRouteId]);
 
