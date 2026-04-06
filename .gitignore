@@ -8,5 +8,5 @@ frontend/build/
 .idea/
 *.iml
 .gradle/
-.yml
-.yaml
+*.yml
+*.yaml
