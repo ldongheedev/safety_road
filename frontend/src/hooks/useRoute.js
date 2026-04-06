@@ -17,19 +17,7 @@ export default function useRoute() {
       if (res.data.length === 0) {
         setError('경로를 찾을 수 없습니다');
       } else {
-        // 백엔드 safetyScore 미구현 시 mock 데이터 주입
-        const scored = res.data.map((route, i) => ({
-          ...route,
-          safetyScore: route.safetyScore ?? [82, 65, 47][i % 3],
-          recommended: false,
-        }));
-        // 가장 안전한 경로를 추천으로 설정
-        const bestIdx = scored.reduce(
-          (best, r, idx) => (r.safetyScore > scored[best].safetyScore ? idx : best),
-          0
-        );
-        scored[bestIdx].recommended = true;
-        setRoutes(scored);
+        setRoutes(res.data);
       }
     } catch {
       setError('경로를 찾을 수 없습니다');
