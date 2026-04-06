@@ -51,8 +51,10 @@ export default function DangerZoneOverlay({ map, zones, visible, origin }) {
 
     const visibleZones = origin
       ? zones.filter((zone) => {
+          if (!zone.bounds || zone.bounds.length === 0) return false;
           const [cLat, cLng] = getZoneCenter(zone.bounds);
-          return haversineKm(origin.lat, origin.lng, cLat, cLng) <= RADIUS_KM;
+          const dist = haversineKm(origin.lat, origin.lng, cLat, cLng);
+          return dist <= RADIUS_KM;
         })
       : zones;
 
