@@ -111,6 +111,7 @@ export default function App() {
         map={map}
         routes={routes}
         selectedRouteId={selectedRouteId}
+        dangerZones={dangerZones}
       />
 
       <DangerZoneOverlay

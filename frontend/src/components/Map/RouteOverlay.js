@@ -14,7 +14,7 @@ function getLevel(score) {
   return 'danger';
 }
 
-export default function RouteOverlay({ map, routes, selectedRouteId }) {
+export default function RouteOverlay({ map, routes, selectedRouteId, dangerZones }) {
   const polylinesRef = useRef([]);
 
   useEffect(() => {
@@ -63,12 +63,79 @@ export default function RouteOverlay({ map, routes, selectedRouteId }) {
 
       polyline.setMap(map);
       polylinesRef.current.push(polyline);
+
+      // 선택된 경로의 위험구간 하이라이트
+      if (isSelected && dangerZones && dangerZones.length > 0) {
+        const highZones = dangerZones.filter((z) => z.riskLevel === 'HIGH' || z.riskLevel === 'MEDIUM');
+        const dangerSegments = findDangerSegments(route.coordinates, highZones);
+
+        dangerSegments.forEach((segment) => {
+          const dangerPath = segment.map(
+            ([lat, lng]) => new kakao.maps.LatLng(lat, lng)
+          );
+
+          // 위험구간 경고 외곽선 (빨간 점선)
+          const dangerLine = new kakao.maps.Polyline({
+            path: dangerPath,
+            strokeColor: '#D32F2F',
+            strokeWeight: 12,
+            strokeOpacity: 0.3,
+            strokeStyle: 'shortdash',
+          });
+          dangerLine.setMap(map);
+          polylinesRef.current.push(dangerLine);
+        });
+      }
     });
 
     fitBounds(map, routes);
-  }, [map, routes, selectedRouteId]);
+  }, [map, routes, selectedRouteId, dangerZones]);
 
   return null;
+}
+
+// 경로 좌표 중 위험구역 내에 있는 연속 구간을 추출
+function findDangerSegments(coordinates, zones) {
+  if (!zones.length) return [];
+
+  const segments = [];
+  let current = [];
+
+  coordinates.forEach((coord) => {
+    const inDanger = zones.some((zone) => isPointInPolygon(coord, zone.bounds));
+
+    if (inDanger) {
+      current.push(coord);
+    } else {
+      if (current.length >= 2) {
+        segments.push(current);
+      }
+      current = [];
+    }
+  });
+
+  if (current.length >= 2) {
+    segments.push(current);
+  }
+
+  return segments;
+}
+
+// 점이 폴리곤 내에 있는지 판별 (ray-casting)
+function isPointInPolygon([lat, lng], bounds) {
+  let inside = false;
+  for (let i = 0, j = bounds.length - 1; i < bounds.length; j = i++) {
+    const [yi, xi] = bounds[i];
+    const [yj, xj] = bounds[j];
+
+    if (
+      yi > lat !== yj > lat &&
+      lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside;
 }
 
 function fitBounds(map, routes) {

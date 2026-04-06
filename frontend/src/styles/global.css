@@ -330,6 +330,104 @@ html, body, #root {
   background: linear-gradient(90deg, #ef5350, #c62828);
 }
 
+/* ── Danger Zone Popup ── */
+.dz-popup-wrap {
+  position: relative;
+}
+
+.dz-popup {
+  width: 180px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.dz-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.dz-popup-header--high {
+  background: #d32f2f;
+}
+
+.dz-popup-header--medium {
+  background: #f57f17;
+}
+
+.dz-popup-header--low {
+  background: #2e7d32;
+}
+
+.dz-popup-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.dz-popup-close:hover {
+  opacity: 1;
+}
+
+.dz-popup-body {
+  padding: 10px 12px;
+}
+
+.dz-popup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.dz-popup-label {
+  color: #888;
+}
+
+.dz-popup-value {
+  font-weight: 700;
+  color: #333;
+}
+
+.dz-popup-bar {
+  width: 100%;
+  height: 5px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.dz-popup-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.dz-popup-bar-fill--high {
+  background: linear-gradient(90deg, #ef5350, #c62828);
+}
+
+.dz-popup-bar-fill--medium {
+  background: linear-gradient(90deg, #ffca28, #f57f17);
+}
+
+.dz-popup-bar-fill--low {
+  background: linear-gradient(90deg, #66bb6a, #2e7d32);
+}
+
 /* ── Danger Zone Toggle Button ── */
 .btn-danger-toggle {
   position: absolute;
