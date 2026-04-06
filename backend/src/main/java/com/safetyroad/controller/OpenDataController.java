@@ -1,6 +1,6 @@
-package com.saferoute.controller;
+package com.safetyroad.controller;
 
-import com.saferoute.service.OpenDataService;
+import com.safetyroad.service.OpenDataService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

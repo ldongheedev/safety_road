@@ -1,4 +1,4 @@
-package com.saferoute.config;
+package com.safetyroad.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

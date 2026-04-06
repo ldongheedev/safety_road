@@ -1,4 +1,4 @@
-package com.saferoute.dto;
+package com.safetyroad.dto;
 
 import java.util.List;
 

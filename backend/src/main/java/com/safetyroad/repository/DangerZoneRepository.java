@@ -1,6 +1,6 @@
-package com.saferoute.repository;
+package com.safetyroad.repository;
 
-import com.saferoute.entity.DangerZone;
+import com.safetyroad.entity.DangerZone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,6 +1,6 @@
-package com.saferoute.repository;
+package com.safetyroad.repository;
 
-import com.saferoute.entity.SafetyFacility;
+import com.safetyroad.entity.SafetyFacility;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,5 +33,14 @@ public interface SafetyFacilityRepository extends JpaRepository<SafetyFacility, 
             @Param("lng1") double lng1,
             @Param("lat2") double lat2,
             @Param("lng2") double lng2
+    );
+
+    @Query(value = "SELECT COUNT(*) FROM safety_facility " +
+            "WHERE ST_DWithin(location, ST_SetSRID(ST_Point(:lng, :lat), 4326), :radius)",
+            nativeQuery = true)
+    int countWithinRadius(
+            @Param("lat") double lat,
+            @Param("lng") double lng,
+            @Param("radius") double radius
     );
 }

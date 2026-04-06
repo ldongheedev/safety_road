@@ -1,6 +1,6 @@
-package com.saferoute.external;
+package com.safetyroad.external;
 
-import com.saferoute.dto.TmapRouteResult;
+import com.safetyroad.dto.TmapRouteResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

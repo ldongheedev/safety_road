@@ -1,4 +1,4 @@
-package com.saferoute.entity;
+package com.safetyroad.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

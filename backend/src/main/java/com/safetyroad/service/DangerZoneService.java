@@ -1,8 +1,8 @@
-package com.saferoute.service;
+package com.safetyroad.service;
 
-import com.saferoute.entity.DangerZone;
-import com.saferoute.repository.DangerZoneRepository;
-import com.saferoute.repository.SafetyFacilityRepository;
+import com.safetyroad.entity.DangerZone;
+import com.safetyroad.repository.DangerZoneRepository;
+import com.safetyroad.repository.SafetyFacilityRepository;
 import org.locationtech.jts.geom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

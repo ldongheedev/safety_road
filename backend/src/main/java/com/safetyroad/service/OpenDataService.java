@@ -1,7 +1,7 @@
-package com.saferoute.service;
+package com.safetyroad.service;
 
-import com.saferoute.entity.SafetyFacility;
-import com.saferoute.repository.SafetyFacilityRepository;
+import com.safetyroad.entity.SafetyFacility;
+import com.safetyroad.repository.SafetyFacilityRepository;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;

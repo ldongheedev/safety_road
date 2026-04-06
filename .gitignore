@@ -2,9 +2,20 @@ backend/build/
 frontend/node_modules/
 frontend/dist/
 frontend/build/
+
+# 환경변수 및 시크릿
 *.env
 .env.*
 !.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# 백엔드 설정 (API 키 포함)
+backend/src/main/resources/application.yml
+backend/src/main/resources/application-*.yml
+
+# IDE
 .idea/
 *.iml
 .gradle/

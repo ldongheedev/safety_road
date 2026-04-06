@@ -1,8 +1,8 @@
-package com.saferoute.controller;
+package com.safetyroad.controller;
 
-import com.saferoute.entity.DangerZone;
-import com.saferoute.repository.DangerZoneRepository;
-import com.saferoute.service.DangerZoneService;
+import com.safetyroad.entity.DangerZone;
+import com.safetyroad.repository.DangerZoneRepository;
+import com.safetyroad.service.DangerZoneService;
 import org.locationtech.jts.geom.Coordinate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

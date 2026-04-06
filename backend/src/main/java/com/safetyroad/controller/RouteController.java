@@ -1,7 +1,7 @@
-package com.saferoute.controller;
+package com.safetyroad.controller;
 
-import com.saferoute.dto.RouteResponse;
-import com.saferoute.service.RouteService;
+import com.safetyroad.dto.RouteResponse;
+import com.safetyroad.service.RouteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
