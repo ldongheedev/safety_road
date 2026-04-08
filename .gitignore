@@ -19,3 +19,5 @@ backend/src/main/resources/application-*.yml
 .idea/
 *.iml
 .gradle/
+*.yml
+*.yaml
