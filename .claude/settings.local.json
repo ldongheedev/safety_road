@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(./gradlew compileJava)",
+      "Bash(gradle wrapper:*)",
+      "Bash(curl -sL \"https://raw.githubusercontent.com/gradle/gradle/v8.12.1/gradle/wrapper/gradle-wrapper.jar\" -o \"C:/safety road/backend/gradle/wrapper/gradle-wrapper.jar\")",
+      "Bash(java:*)",
+      "Read(//c/Users/mirac/.jdks//**)",
+      "Read(//c/Program Files/Java//**)",
+      "Read(//c/Program Files/Amazon Corretto//**)",
+      "Bash(where java:*)",
+      "Bash(/c/Users/mirac/.jdks/jdk-23/bin/java -version 2>&1)",
+      "Bash(\"/c/Users/mirac/.jdks/openjdk-24.0.1/bin/java.exe\" -version)",
+      "Bash(JAVA_HOME=\"C:/Users/mirac/.jdks/openjdk-24.0.1\" ./gradlew compileJava)",
+      "Bash(JAVA_HOME=\"C:/Users/mirac/.jdks/openjdk-24.0.1\" ./gradlew compileJava --stacktrace)",
+      "Bash(npx vite:*)",
+      "Bash(rm -rf node_modules vite.config.js eslint.config.js dist .vite src/main.jsx src/assets)",
+      "Bash(mkdir -p public)",
+      "Bash(mv App.jsx App.js)",
+      "Bash(mv components/KakaoMap.jsx components/KakaoMap.js)",
+      "Bash(mv components/SearchBar.jsx components/SearchBar.js)",
+      "Bash(mv pages/HomePage.jsx pages/HomePage.js)",
+      "Bash(npm start:*)",
+      "Bash(JAVA_HOME=\"C:/Users/mirac/.jdks/openjdk-24.0.1\" ./gradlew bootRun)",
+      "Bash(DB_USERNAME=safetyroad_db DB_PASSWORD=fm136 TMAP_APP_KEY=S5jlB4eKpe9JFTom4T3ye1KWm88A2ck667teasl8 KAKAO_REST_API_KEY=db78fc2713826334c55b21ffe1f604c2 JAVA_HOME=\"C:/Users/mirac/.jdks/openjdk-24.0.1\" ./gradlew bootRun)",
+      "Bash(taskkill:*)"
+    ]
+  }
+}
