@@ -26,7 +26,14 @@
       "Bash(npm start:*)",
       "Bash(JAVA_HOME=\"C:/Users/mirac/.jdks/openjdk-24.0.1\" ./gradlew bootRun)",
       "Bash(DB_USERNAME=safetyroad_db DB_PASSWORD=fm136 TMAP_APP_KEY=S5jlB4eKpe9JFTom4T3ye1KWm88A2ck667teasl8 KAKAO_REST_API_KEY=db78fc2713826334c55b21ffe1f604c2 JAVA_HOME=\"C:/Users/mirac/.jdks/openjdk-24.0.1\" ./gradlew bootRun)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(./gradlew bootRun --console=plain)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(netstat -ano)",
+      "Bash(cmd.exe:*)",
+      "Bash(powershell:*)",
+      "Read(//c/Users/이원적/git/teample//**)",
+      "Read(//c/Users/이원적/git/teample/.git/**)"
     ]
   }
 }
