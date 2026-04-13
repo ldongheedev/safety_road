@@ -43,4 +43,16 @@ public interface SafetyFacilityRepository extends JpaRepository<SafetyFacility, 
             @Param("lng") double lng,
             @Param("radius") double radius
     );
+
+    @Query(value = "SELECT * FROM safety_facility " +
+            "WHERE ST_Within(location, ST_MakeEnvelope(:lng1, :lat1, :lng2, :lat2, 4326)) " +
+            "LIMIT :limit",
+            nativeQuery = true)
+    List<SafetyFacility> findWithinBounds(
+            @Param("lat1") double lat1,
+            @Param("lng1") double lng1,
+            @Param("lat2") double lat2,
+            @Param("lng2") double lng2,
+            @Param("limit") int limit
+    );
 }

@@ -25,9 +25,9 @@ public class OpenDataService {
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     private static final String BASE_URL = "https://openapi.gg.go.kr";
     private static final int PAGE_SIZE = 1000;
-    // 성남시 분당구 좌표 범위 (대략)
+    // 성남시 전체 좌표 범위 (분당구 + 수정구 + 중원구)
     private static final double MIN_LAT = 37.33;
-    private static final double MAX_LAT = 37.42;
+    private static final double MAX_LAT = 37.52;
     private static final double MIN_LNG = 127.04;
     private static final double MAX_LNG = 127.16;
 
@@ -86,7 +86,7 @@ public class OpenDataService {
                 String addr = Objects.toString(row.get("REFINE_ROADNM_ADDR"), "");
 
                 if (lat.isEmpty() || lng.isEmpty()) continue;
-                if (!isInBundang(lat, lng)) continue;
+                if (!isInSeongnam(lat, lng)) continue;
 
                 SafetyFacility f = new SafetyFacility();
                 f.setFacilityType("CCTV");
@@ -135,7 +135,7 @@ public class OpenDataService {
                 String addr = Objects.toString(row.get("REFINE_ROADNM_ADDR"), "");
 
                 if (lat.isEmpty() || lng.isEmpty()) continue;
-                if (!isInBundang(lat, lng)) continue;
+                if (!isInSeongnam(lat, lng)) continue;
 
                 SafetyFacility f = new SafetyFacility();
                 f.setFacilityType("SECURITY_LIGHT");
@@ -213,7 +213,7 @@ public class OpenDataService {
         }
     }
 
-    private boolean isInBundang(String latStr, String lngStr) {
+    private boolean isInSeongnam(String latStr, String lngStr) {
         try {
             double lat = Double.parseDouble(latStr);
             double lng = Double.parseDouble(lngStr);

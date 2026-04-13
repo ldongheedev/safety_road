@@ -1,8 +1,31 @@
+import { getLevel, getLevelLabel } from '../../utils/safetyUtils';
+
 export default function RouteResult({ routes, selectedRouteId, onSelectRoute }) {
   if (!routes.length) return null;
 
+  const recommendedRoute = routes.find(r => r.recommended);
+
   return (
     <div className="route-result">
+      <button
+        onClick={() => recommendedRoute && onSelectRoute(recommendedRoute.routeId)}
+        disabled={!recommendedRoute}
+        style={{
+          width: '100%',
+          background: recommendedRoute ? '#22c55e' : '#9ca3af',
+          color: '#fff',
+          borderRadius: '8px',
+          padding: '12px',
+          fontWeight: 'bold',
+          border: 'none',
+          cursor: recommendedRoute ? 'pointer' : 'not-allowed',
+          marginBottom: '8px',
+        }}
+        onMouseEnter={e => { if (recommendedRoute) e.currentTarget.style.background = '#16a34a'; }}
+        onMouseLeave={e => { if (recommendedRoute) e.currentTarget.style.background = '#22c55e'; }}
+      >
+        {recommendedRoute ? '🛡️ 가장 안전한 경로로 안내' : '추천 경로 없음'}
+      </button>
       <div className="route-list">
         {routes.map((route) => {
           const isSelected = route.routeId === selectedRouteId;
@@ -31,7 +54,7 @@ export default function RouteResult({ routes, selectedRouteId, onSelectRoute }) 
               <div className="route-safety-section">
                 <div className="route-safety-header">
                   <span className={`route-safety-label route-safety-label--${level}`}>
-                    {level === 'safe' ? '안전' : level === 'caution' ? '보통' : '주의'}
+                    {getLevelLabel(score)}
                   </span>
                   <span className={`route-safety-score route-safety-score--${level}`}>
                     {score != null ? score : '-'}점
@@ -52,9 +75,3 @@ export default function RouteResult({ routes, selectedRouteId, onSelectRoute }) 
   );
 }
 
-function getLevel(score) {
-  if (score == null) return 'unknown';
-  if (score >= 70) return 'safe';
-  if (score >= 40) return 'caution';
-  return 'danger';
-}

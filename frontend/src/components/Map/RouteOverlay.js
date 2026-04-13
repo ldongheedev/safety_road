@@ -1,18 +1,5 @@
 import { useEffect, useRef } from 'react';
-
-const COLORS = {
-  safe: '#2DB400',    // 초록
-  caution: '#F5A623', // 노랑/주황
-  danger: '#D32F2F',  // 빨강
-  unknown: '#999999',
-};
-
-function getLevel(score) {
-  if (score == null) return 'unknown';
-  if (score >= 70) return 'safe';
-  if (score >= 40) return 'caution';
-  return 'danger';
-}
+import { getLevel, getLevelColor } from '../../utils/safetyUtils';
 
 export default function RouteOverlay({ map, routes, selectedRouteId, dangerZones }) {
   const polylinesRef = useRef([]);
@@ -34,7 +21,7 @@ export default function RouteOverlay({ map, routes, selectedRouteId, dangerZones
     sorted.forEach((route) => {
       const isSelected = route.routeId === selectedRouteId;
       const level = getLevel(route.safetyScore);
-      const color = COLORS[level];
+      const color = getLevelColor(route.safetyScore);
 
       const path = route.coordinates.map(
         ([lat, lng]) => new kakao.maps.LatLng(lat, lng)
