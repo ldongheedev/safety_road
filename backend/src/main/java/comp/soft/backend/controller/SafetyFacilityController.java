@@ -33,8 +33,8 @@ public class SafetyFacilityController {
             Map<String, Object> map = new HashMap<>();
             map.put("id", f.getId());
             map.put("facilityType", f.getFacilityType());
-            map.put("lat", f.getLocation().getY());
-            map.put("lng", f.getLocation().getX());
+            map.put("lat", f.getLatitude());
+            map.put("lng", f.getLongitude());
             result.add(map);
         }
 

@@ -3,7 +3,6 @@ package comp.soft.backend.controller;
 import comp.soft.backend.entity.DangerZone;
 import comp.soft.backend.repository.DangerZoneRepository;
 import comp.soft.backend.service.DangerZoneService;
-import org.locationtech.jts.geom.Coordinate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,11 +33,13 @@ public class DangerZoneController {
             map.put("facilityCount", zone.getFacilityCount());
             map.put("riskLevel", zone.getRiskLevel());
 
-            Coordinate[] coords = zone.getGridPolygon().getCoordinates();
-            List<double[]> bounds = new ArrayList<>();
-            for (Coordinate c : coords) {
-                bounds.add(new double[]{c.y, c.x});
-            }
+            List<double[]> bounds = List.of(
+                    new double[]{zone.getMinLat(), zone.getMinLng()},
+                    new double[]{zone.getMinLat(), zone.getMaxLng()},
+                    new double[]{zone.getMaxLat(), zone.getMaxLng()},
+                    new double[]{zone.getMaxLat(), zone.getMinLng()},
+                    new double[]{zone.getMinLat(), zone.getMinLng()}
+            );
             map.put("bounds", bounds);
 
             result.add(map);

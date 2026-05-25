@@ -2,9 +2,6 @@ package comp.soft.backend.service;
 
 import comp.soft.backend.entity.SafetyFacility;
 import comp.soft.backend.repository.SafetyFacilityRepository;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +30,6 @@ import java.util.*;
 public class OpenDataService {
 
     private static final Logger log = LoggerFactory.getLogger(OpenDataService.class);
-    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     private static final String BASE_URL = "https://openapi.gg.go.kr";
     private static final int PAGE_SIZE = 1000;
     private static final double MIN_LAT = 37.33;
@@ -109,9 +105,8 @@ public class OpenDataService {
                 f.setFacilityType("CCTV");
                 f.setName(Objects.toString(row.get("INSTL_PUPRS_DIV_NM"), "CCTV"));
                 f.setAddress(addr.isEmpty() ? Objects.toString(row.get("REFINE_LOTNO_ADDR"), "") : addr);
-                f.setLocation(geometryFactory.createPoint(
-                        new Coordinate(Double.parseDouble(lng), Double.parseDouble(lat))
-                ));
+                f.setLatitude(Double.parseDouble(lat));
+                f.setLongitude(Double.parseDouble(lng));
                 f.setDataSource("경기데이터드림");
                 facilities.add(f);
             }
@@ -154,9 +149,8 @@ public class OpenDataService {
                 f.setFacilityType("SECURITY_LIGHT");
                 f.setName(Objects.toString(row.get("SECRT_LGT_DVSN_NM"), "보안등"));
                 f.setAddress(addr.isEmpty() ? Objects.toString(row.get("REFINE_LOTNO_ADDR"), "") : addr);
-                f.setLocation(geometryFactory.createPoint(
-                        new Coordinate(Double.parseDouble(lng), Double.parseDouble(lat))
-                ));
+                f.setLatitude(Double.parseDouble(lat));
+                f.setLongitude(Double.parseDouble(lng));
                 f.setDataSource("경기데이터드림");
                 facilities.add(f);
             }
@@ -210,9 +204,8 @@ public class OpenDataService {
                 f.setFacilityType(facilityType);
                 f.setName(name);
                 f.setAddress(addr.isEmpty() ? Objects.toString(row.get("REFINE_LOTNO_ADDR"), "") : addr);
-                f.setLocation(geometryFactory.createPoint(
-                        new Coordinate(Double.parseDouble(lng), Double.parseDouble(lat))
-                ));
+                f.setLatitude(Double.parseDouble(lat));
+                f.setLongitude(Double.parseDouble(lng));
                 f.setDataSource("경기데이터드림");
                 facilities.add(f);
             }
@@ -262,9 +255,8 @@ public class OpenDataService {
                 f.setFacilityType("POLICE");
                 f.setName(name);
                 f.setAddress(addr);
-                f.setLocation(geometryFactory.createPoint(
-                        new Coordinate(Double.parseDouble(lng), Double.parseDouble(lat))
-                ));
+                f.setLatitude(Double.parseDouble(lat));
+                f.setLongitude(Double.parseDouble(lng));
                 f.setDataSource("경기데이터드림_치안");
                 facilities.add(f);
             }
@@ -443,7 +435,8 @@ public class OpenDataService {
                 f.setFacilityType("SECURITY_LIGHT");
                 f.setName(name.isEmpty() ? "보안등" : name);
                 f.setAddress(roadAddr.isEmpty() ? lotAddr : roadAddr);
-                f.setLocation(geometryFactory.createPoint(new Coordinate(lng, lat)));
+                f.setLatitude(lat);
+                f.setLongitude(lng);
                 f.setDataSource("CSV");
                 facilities.add(f);
             }

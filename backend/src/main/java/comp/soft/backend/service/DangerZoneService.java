@@ -3,7 +3,6 @@ package comp.soft.backend.service;
 import comp.soft.backend.entity.DangerZone;
 import comp.soft.backend.repository.DangerZoneRepository;
 import comp.soft.backend.repository.SafetyFacilityRepository;
-import org.locationtech.jts.geom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import java.util.List;
 public class DangerZoneService {
 
     private static final Logger log = LoggerFactory.getLogger(DangerZoneService.class);
-    private static final GeometryFactory gf = new GeometryFactory(new PrecisionModel(), 4326);
 
     private static final double MIN_LAT = 37.33;
     private static final double MAX_LAT = 37.52;
@@ -61,10 +59,11 @@ public class DangerZoneService {
                     continue;
                 }
 
-                Polygon polygon = createGridPolygon(lat, lng, lat2, lng2);
-
                 DangerZone zone = new DangerZone();
-                zone.setGridPolygon(polygon);
+                zone.setMinLat(lat);
+                zone.setMinLng(lng);
+                zone.setMaxLat(lat2);
+                zone.setMaxLng(lng2);
                 zone.setSafetyScore(BigDecimal.valueOf(safetyScore).setScale(2, RoundingMode.HALF_UP));
                 zone.setFacilityCount(count);
                 zone.setRiskLevel(riskLevel);
@@ -96,16 +95,5 @@ public class DangerZoneService {
                 lat1 - GRID_LAT, lng1 - GRID_LNG,
                 lat2 + GRID_LAT, lng2 + GRID_LNG
         ) > 0;
-    }
-
-    private Polygon createGridPolygon(double lat1, double lng1, double lat2, double lng2) {
-        Coordinate[] coords = new Coordinate[]{
-                new Coordinate(lng1, lat1),
-                new Coordinate(lng2, lat1),
-                new Coordinate(lng2, lat2),
-                new Coordinate(lng1, lat2),
-                new Coordinate(lng1, lat1)
-        };
-        return gf.createPolygon(coords);
     }
 }
