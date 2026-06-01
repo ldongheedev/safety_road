@@ -23,12 +23,15 @@ public class SafetyFacilityController {
             @RequestParam double lng1,
             @RequestParam double lat2,
             @RequestParam double lng2,
-            @RequestParam(defaultValue = "200") int limit) {
+            @RequestParam(defaultValue = "200") int limit,
+            @RequestParam(required = false) String type) {
 
-        int safeLimit = Math.min(limit, 200);
-        List<SafetyFacility> facilities = facilityRepository.findWithinBounds(lat1, lng1, lat2, lng2, safeLimit);
+        int safeLimit = Math.min(limit, 1000);
+        List<SafetyFacility> facilities = (type != null && !type.isBlank())
+                ? facilityRepository.findByTypeWithinBounds(lat1, lng1, lat2, lng2, type, safeLimit)
+                : facilityRepository.findWithinBounds(lat1, lng1, lat2, lng2, safeLimit);
+
         List<Map<String, Object>> result = new ArrayList<>();
-
         for (SafetyFacility f : facilities) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", f.getId());

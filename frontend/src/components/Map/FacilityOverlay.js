@@ -75,10 +75,10 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
     }
 
     const kakao = window.kakao;
-    if (!map || !kakao || !visible || !bounds || zoom > MAX_KAKAO_LEVEL) return;
+    if (!map || !kakao || !visible || !bounds || !zoom || zoom > MAX_KAKAO_LEVEL) return;
 
     const { lat1, lng1, lat2, lng2 } = bounds;
-    const base = `/api/facilities?lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}&limit=1000`;
+    const base = `/api/facilities?lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}&limit=300`;
     const controller = new AbortController();
     const signal = controller.signal;
 
