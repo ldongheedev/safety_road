@@ -23,6 +23,7 @@ backend/src/main/resources/application-*.yml
 
 # IDE
 .idea/
+.vscode/
 *.iml
 .gradle/
 *.yml
