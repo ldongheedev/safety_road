@@ -193,10 +193,6 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
         routes={routes ?? []}
         selectedRouteId={selectedRouteId}
       />
-<<<<<<< HEAD
-=======
-
->>>>>>> 8d28082 (refactor: 불필요한 코드 전체 정리)
 
       <FacilityOverlay
         map={map}
