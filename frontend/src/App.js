@@ -169,8 +169,8 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
             style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: showFacilities ? '#3b82f6' : '#9ca3af' }}
             onClick={() => setShowFacilities((v) => !v)}
           >
-            {zoom > 6 ? '시설 (줌인 필요)' : `시설 ${showFacilities ? 'ON' : 'OFF'}`}
-            {showFacilities && zoom <= 6 && (
+            {zoom > 5 ? '시설 (줌인 필요)' : `시설 ${showFacilities ? 'ON' : 'OFF'}`}
+            {showFacilities && zoom <= 5 && (
               <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '5px' }}>
                 {[
                   { color: '#3b82f6', label: 'CCTV' },

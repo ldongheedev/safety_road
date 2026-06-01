@@ -11,8 +11,14 @@ frontend/build/
 # DB 덤프
 *.sql
 
+# 원본 데이터 파일
+*.csv
+
 # 임시 파일
 *.zip
+
+# 팀 내부 문서 (API 키 포함)
+TEAM_BRIEFING.md
 frontend/.env
 frontend/.env.*
 !frontend/.env.example

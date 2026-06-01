@@ -1,20 +1,18 @@
 import { useEffect, useRef } from 'react';
 
 const FACILITY_CONFIG = {
-  CCTV: { color: '#3b82f6', label: '📹 CCTV' },
-  SECURITY_LIGHT: { color: '#eab308', label: '💡 보안등' },
-  POLICE: { color: '#ef4444', label: '🚨 경찰/치안' },
+  CCTV: { color: '#3b82f6', label: '📹 CCTV', size: '10px' },
+  SECURITY_LIGHT: { color: '#eab308', label: '💡 보안등', size: '8px' },
+  POLICE: { color: '#ef4444', label: '🚨 경찰/치안', size: '12px' },
 };
 
-// Kakao Maps: level 1(최대 줌인) ~ 14(최대 줌아웃)
-// 시설 마커는 충분히 줌인된 상태(level ≤ 6)에서만 표시
-const MAX_KAKAO_LEVEL = 6;
+// level 1(최대 줌인) ~ 14(최대 줌아웃) — 5 이하일 때만 마커 표시
+const MAX_KAKAO_LEVEL = 5;
 
 export default function FacilityOverlay({ map, visible, bounds, zoom }) {
   const markersRef = useRef([]);
   const tooltipRef = useRef(null);
 
-  // 툴팁 전역 함수 등록
   useEffect(() => {
     window.__showFacilityTooltip = (label, lat, lng) => {
       const kakao = window.kakao;
@@ -57,7 +55,6 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
     };
   }, [map]);
 
-  // 언마운트 cleanup
   useEffect(() => {
     return () => {
       markersRef.current.forEach((m) => m.setMap(null));
@@ -66,7 +63,6 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
   }, []);
 
   useEffect(() => {
-    // 기존 마커·툴팁 전부 제거
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
     if (tooltipRef.current) {
@@ -78,7 +74,7 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
     if (!map || !kakao || !visible || !bounds || !zoom || zoom > MAX_KAKAO_LEVEL) return;
 
     const { lat1, lng1, lat2, lng2 } = bounds;
-    const base = `/api/facilities?lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}&limit=300`;
+    const base = `/api/facilities?lat1=${lat1}&lng1=${lng1}&lat2=${lat2}&lng2=${lng2}&limit=500`;
     const controller = new AbortController();
     const signal = controller.signal;
 
@@ -87,15 +83,12 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
         const config = FACILITY_CONFIG[f.facilityType];
         if (!config) return;
 
-        const isPolice = f.facilityType === 'POLICE';
-        const size = isPolice ? '12px' : '8px';
-
         const content = `
           <div
             onclick="window.__showFacilityTooltip('${config.label}', ${f.lat}, ${f.lng})"
             style="
-              width:${size};
-              height:${size};
+              width:${config.size};
+              height:${config.size};
               background:${config.color};
               border:1px solid #fff;
               border-radius:50%;
@@ -108,7 +101,7 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
         const marker = new kakao.maps.CustomOverlay({
           content,
           position: new kakao.maps.LatLng(f.lat, f.lng),
-          zIndex: isPolice ? 15 : 10,
+          zIndex: f.facilityType === 'POLICE' ? 15 : 10,
         });
         marker.setMap(map);
         markersRef.current.push(marker);

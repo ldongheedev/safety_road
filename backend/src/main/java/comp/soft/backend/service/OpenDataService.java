@@ -62,6 +62,9 @@ public class OpenDataService {
     @Value("${opendata.police-key}")
     private String policeKey;
 
+    @Value("${opendata.illumination-key}")
+    private String illuminationKey;
+
     public OpenDataService(SafetyFacilityRepository facilityRepository) {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
@@ -78,6 +81,8 @@ public class OpenDataService {
         result.put("POLICE_BOX", syncPoliceBoxes());
         result.put("DISTRICT_POLICE", syncDistrictPolice());
         result.put("POLICE", syncPolice());
+        result.put("ILLUMINATION_LIGHT", syncIlluminationLights());
+        result.put("SEONGNAM_CCTV", syncSeongnamCctv());
         return result;
     }
 
@@ -277,6 +282,137 @@ public class OpenDataService {
 
         log.info("소방/경찰 동기화 완료: {}건", facilities.size());
         return facilities.size();
+    }
+
+    @SuppressWarnings("unchecked")
+    public int syncIlluminationLights() {
+        log.info("조도측정 보안등 데이터 동기화 시작");
+        List<SafetyFacility> facilities = new ArrayList<>();
+        int page = 1;
+        int perPage = 1000;
+
+        while (true) {
+            String url = String.format(
+                    "https://api.odcloud.kr/api/15110584/v1/uddi:8ccdb2d7-f990-4334-855f-d75ae55fa92a?page=%d&perPage=%d&serviceKey=%s",
+                    page, perPage, illuminationKey);
+            Map response = fetchApi(url, perPage, page);
+            if (response == null) break;
+
+            List<Map<String, Object>> rows;
+            try {
+                rows = (List<Map<String, Object>>) response.get("data");
+            } catch (Exception e) {
+                break;
+            }
+            if (rows == null || rows.isEmpty()) break;
+
+            for (Map<String, Object> row : rows) {
+                String latStr = Objects.toString(row.get("위도(LATITUDE)"), "").trim();
+                String lngStr = Objects.toString(row.get("경도(LONGITUDE)"), "").trim();
+                if (latStr.isEmpty() || lngStr.isEmpty()) continue;
+                if (!isInSeongnam(latStr, lngStr)) continue;
+
+                SafetyFacility f = new SafetyFacility();
+                f.setFacilityType("SECURITY_LIGHT");
+                f.setName("가로등");
+                f.setAddress("");
+                f.setLatitude(Double.parseDouble(latStr));
+                f.setLongitude(Double.parseDouble(lngStr));
+                f.setDataSource("공공데이터포털_조도");
+                facilities.add(f);
+            }
+
+            int totalCount = ((Number) response.getOrDefault("totalCount", 0)).intValue();
+            if (page * perPage >= totalCount) break;
+            page++;
+        }
+
+        if (!facilities.isEmpty()) {
+            facilityRepository.deleteByFacilityTypeAndDataSource("SECURITY_LIGHT", "공공데이터포털_조도");
+            facilityRepository.saveAll(facilities);
+        }
+
+        log.info("조도측정 보안등 동기화 완료: {}건", facilities.size());
+        return facilities.size();
+    }
+
+    @SuppressWarnings("unchecked")
+    public int syncSeongnamCctv() {
+        log.info("성남시 생활안전 CCTV 동기화 시작");
+        List<SafetyFacility> facilities = new ArrayList<>();
+        int page = 1;
+        int perPage = 1000;
+
+        while (true) {
+            String url = String.format(
+                    "https://api.odcloud.kr/api/15147955/v1/uddi:6134ce56-07cc-45d9-b3d9-ed6fc76d9d4c?page=%d&perPage=%d&serviceKey=%s",
+                    page, perPage, illuminationKey);
+            Map response = fetchApi(url, perPage, page);
+            if (response == null) break;
+
+            List<Map<String, Object>> rows;
+            try {
+                rows = (List<Map<String, Object>>) response.get("data");
+            } catch (Exception e) {
+                break;
+            }
+            if (rows == null || rows.isEmpty()) break;
+
+            for (Map<String, Object> row : rows) {
+                String latStr = Objects.toString(row.get("위도"), "").trim();
+                String lngStr = Objects.toString(row.get("경도"), "").trim();
+                if (latStr.isEmpty() || lngStr.isEmpty()) continue;
+                if (!isInSeongnam(latStr, lngStr)) continue;
+
+                String addr = Objects.toString(row.get("도로명주소"), "");
+                if (addr.isEmpty()) addr = Objects.toString(row.get("지번주소"), "");
+
+                SafetyFacility f = new SafetyFacility();
+                f.setFacilityType("CCTV");
+                f.setName("생활안전CCTV");
+                f.setAddress(addr);
+                f.setLatitude(Double.parseDouble(latStr));
+                f.setLongitude(Double.parseDouble(lngStr));
+                f.setDataSource("공공데이터포털_성남CCTV");
+                facilities.add(f);
+            }
+
+            int totalCount = ((Number) response.getOrDefault("totalCount", 0)).intValue();
+            if (page * perPage >= totalCount) break;
+            page++;
+        }
+
+        if (!facilities.isEmpty()) {
+            facilityRepository.deleteByFacilityTypeAndDataSource("CCTV", "공공데이터포털_성남CCTV");
+            facilityRepository.saveAll(facilities);
+        }
+
+        log.info("성남시 CCTV 동기화 완료: {}건", facilities.size());
+        return facilities.size();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map fetchApi(String fullUrl, int size, int page) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(fullUrl))
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                    .header("Accept", "application/json, */*")
+                    .timeout(Duration.ofSeconds(30))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String body = response.body();
+            if (body == null || body.trim().startsWith("<")) {
+                log.error("API HTML 응답 (차단): {}", fullUrl);
+                return null;
+            }
+            return objectMapper.readValue(body, Map.class);
+        } catch (Exception e) {
+            log.error("API 호출 실패: {} - {}", fullUrl, e.getMessage());
+            return null;
+        }
     }
 
     private String fetchXmlApi(String url) {

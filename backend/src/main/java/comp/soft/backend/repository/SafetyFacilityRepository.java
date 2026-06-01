@@ -92,12 +92,15 @@ public class SafetyFacilityRepository {
 
     public List<SafetyFacility> findByTypeWithinBounds(double lat1, double lng1, double lat2, double lng2,
                                                         String type, int limit) {
+        double centerLat = (lat1 + lat2) / 2;
+        double centerLng = (lng1 + lng2) / 2;
         return jdbcTemplate.query(
                 SELECT_COORDS +
                 "WHERE facility_type = ? " +
                 "AND ST_Within(location, ST_MakeEnvelope(?, ?, ?, ?, 4326)) " +
+                "ORDER BY ST_Distance(location, ST_SetSRID(ST_Point(?, ?), 4326)) " +
                 "LIMIT ?",
-                rowMapper, type, lng1, lat1, lng2, lat2, limit);
+                rowMapper, type, lng1, lat1, lng2, lat2, centerLng, centerLat, limit);
     }
 
     public List<SafetyFacility> findWithinBounds(double lat1, double lng1, double lat2, double lng2, int limit) {
