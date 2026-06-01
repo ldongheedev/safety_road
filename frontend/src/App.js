@@ -3,11 +3,9 @@ import './styles/global.css';
 import KakaoMap from './components/KakaoMap';
 import SearchBar from './components/SearchBar';
 import RouteOverlay from './components/Map/RouteOverlay';
-import DangerZoneOverlay from './components/Map/DangerZoneOverlay';
 import FacilityOverlay from './components/Map/FacilityOverlay';
 import RouteResult from './components/Route/RouteResult';
 import useRoute from './hooks/useRoute';
-import useDangerZones from './hooks/useDangerZones';
 import SOSButton from './components/SOSButton';
 
 export default function App() {
@@ -25,7 +23,6 @@ export default function App() {
   const destMarkerRef = useRef(null);
   const boundsTimerRef = useRef(null);
   const { routes, loading, error, fetchRoutes } = useRoute();
-  const dangerZones = useDangerZones();
 
   useEffect(() => {
     const recommendedRoute = (routes ?? []).find(r => r.recommended);
@@ -193,16 +190,6 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
 
       <RouteOverlay
         map={map}
-        routes={routes ?? []}
-        selectedRouteId={selectedRouteId}
-        dangerZones={dangerZones}
-      />
-
-      <DangerZoneOverlay
-        map={map}
-        zones={dangerZones}
-        visible={true}
-        origin={origin}
         routes={routes ?? []}
         selectedRouteId={selectedRouteId}
       />

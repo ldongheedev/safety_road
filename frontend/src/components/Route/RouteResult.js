@@ -1,3 +1,5 @@
+import { getLevel, getLevelLabel } from '../../utils/safetyUtils';
+
 export default function RouteResult({ routes, selectedRouteId, onSelectRoute }) {
   if (!routes.length) return null;
 
@@ -44,6 +46,24 @@ export default function RouteResult({ routes, selectedRouteId, onSelectRoute }) 
                 <span className="route-time">{min}분</span>
                 <span className="route-distance">{km}km</span>
               </div>
+              {route.safetyScore != null && (
+                <div className="route-safety-section">
+                  <div className="route-safety-header">
+                    <span className={`route-safety-label route-safety-label--${getLevel(route.safetyScore)}`}>
+                      {getLevelLabel(route.safetyScore)}
+                    </span>
+                    <span className={`route-safety-score route-safety-score--${getLevel(route.safetyScore)}`}>
+                      {route.safetyScore.toFixed(1)}점
+                    </span>
+                  </div>
+                  <div className="route-safety-bar">
+                    <div
+                      className={`route-safety-bar-fill route-safety-bar-fill--${getLevel(route.safetyScore)}`}
+                      style={{ width: `${route.safetyScore}%` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
