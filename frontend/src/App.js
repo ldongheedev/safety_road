@@ -15,7 +15,6 @@ export default function App() {
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [selectedRouteId, setSelectedRouteId] = useState(null);
-  const [showDangerZones, setShowDangerZones] = useState(true);
   const [showFacilities, setShowFacilities] = useState(false);
   const [clickMode, setClickMode] = useState(null);
   const [originLabel, setOriginLabel] = useState(undefined);
@@ -168,15 +167,9 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
         />
 
         {/* 토글 버튼 영역 */}
-        <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '10px', display: 'flex', gap: '8px' }}>
+        <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '10px' }}>
           <button
-            style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: showDangerZones ? '#ef4444' : '#9ca3af' }}
-            onClick={() => setShowDangerZones((v) => !v)}
-          >
-            {`🚨 위험구역 ${showDangerZones ? 'ON' : 'OFF'}`}
-          </button>
-          <button
-            style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: showFacilities ? '#3b82f6' : '#9ca3af' }}
+            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: showFacilities ? '#3b82f6' : '#9ca3af' }}
             onClick={() => setShowFacilities((v) => !v)}
           >
             {zoom > 6 ? '시설 (줌인 필요)' : `시설 ${showFacilities ? 'ON' : 'OFF'}`}
@@ -185,8 +178,7 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
                 {[
                   { color: '#3b82f6', label: 'CCTV' },
                   { color: '#eab308', label: '보안등' },
-                  { color: '#1d4ed8', label: '치안센터' },
-                  { color: '#7c3aed', label: '지구대' },
+                  { color: '#ef4444', label: '경찰/치안' },
                 ].map(({ color, label }) => (
                   <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px' }}>
                     <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: color, border: '1px solid #fff', flexShrink: 0 }} />
@@ -209,7 +201,7 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
       <DangerZoneOverlay
         map={map}
         zones={dangerZones}
-        visible={showDangerZones}
+        visible={true}
         origin={origin}
         routes={routes ?? []}
         selectedRouteId={selectedRouteId}

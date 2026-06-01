@@ -3,8 +3,6 @@ import { useEffect, useRef } from 'react';
 const FACILITY_CONFIG = {
   CCTV: { color: '#3b82f6', label: '📹 CCTV' },
   SECURITY_LIGHT: { color: '#eab308', label: '💡 보안등' },
-  POLICE_BOX: { color: '#1d4ed8', label: '🚔 치안센터' },
-  DISTRICT_POLICE: { color: '#7c3aed', label: '🚓 지구대' },
   POLICE: { color: '#ef4444', label: '🚨 경찰/치안' },
 };
 
@@ -89,8 +87,7 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
         const config = FACILITY_CONFIG[f.facilityType];
         if (!config) return;
 
-        // 경찰 시설은 크기를 키워서 시각적으로 구분
-        const isPolice = f.facilityType === 'POLICE_BOX' || f.facilityType === 'DISTRICT_POLICE';
+        const isPolice = f.facilityType === 'POLICE';
         const size = isPolice ? '12px' : '8px';
 
         const content = `
@@ -121,15 +118,11 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
     Promise.all([
       fetch(`${base}&type=CCTV`, { signal }).then((r) => r.json()),
       fetch(`${base}&type=SECURITY_LIGHT`, { signal }).then((r) => r.json()),
-      fetch(`${base}&type=POLICE_BOX`, { signal }).then((r) => r.json()),
-      fetch(`${base}&type=DISTRICT_POLICE`, { signal }).then((r) => r.json()),
       fetch(`${base}&type=POLICE`, { signal }).then((r) => r.json()),
     ])
-      .then(([cctv, lights, policeBox, districtPolice, police]) => {
+      .then(([cctv, lights, police]) => {
         renderFacilities(cctv);
         renderFacilities(lights);
-        renderFacilities(policeBox);
-        renderFacilities(districtPolice);
         renderFacilities(police);
       })
       .catch((err) => {

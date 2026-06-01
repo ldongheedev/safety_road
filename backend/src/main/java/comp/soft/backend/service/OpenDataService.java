@@ -247,9 +247,13 @@ public class OpenDataService {
                 if (lat.isEmpty() || lng.isEmpty()) continue;
                 if (!isInSeongnam(lat, lng)) continue;
 
+                String facltDiv = row.getOrDefault("FACLT_DIV_NM", "");
                 String name = row.getOrDefault("INST_NM", "경찰시설");
                 String addr = row.getOrDefault("REFINE_ROADNM_ADDR", "");
                 if (addr.isEmpty()) addr = row.getOrDefault("REFINE_LOTNO_ADDR", "");
+
+                // 소방서 제외
+                if (facltDiv.contains("소방서")) continue;
 
                 SafetyFacility f = new SafetyFacility();
                 f.setFacilityType("POLICE");
@@ -312,7 +316,7 @@ public class OpenDataService {
                 Map<String, String> row = new LinkedHashMap<>();
                 for (int j = 0; j < children.getLength(); j++) {
                     if (children.item(j) instanceof Element child) {
-                        row.put(child.getTagName(), child.getTextContent().trim());
+                        row.put(child.getTagName().toUpperCase(), child.getTextContent().trim());
                     }
                 }
                 if (!row.isEmpty()) rows.add(row);
