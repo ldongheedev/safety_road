@@ -53,12 +53,6 @@ public class OpenDataService {
     @Value("${opendata.streetlight-stats-key}")
     private String streetlightStatsKey;
 
-    @Value("${opendata.police-box-key}")
-    private String policeBoxKey;
-
-    @Value("${opendata.district-police-key}")
-    private String districtPoliceKey;
-
     @Value("${opendata.police-key}")
     private String policeKey;
 
@@ -78,8 +72,6 @@ public class OpenDataService {
         result.put("CCTV", syncCctv());
         result.put("SECURITY_LIGHT", syncSecurityLights());
         result.put("CSV_SECURITY_LIGHT", syncSecurityLightsFromCsv());
-        result.put("POLICE_BOX", syncPoliceBoxes());
-        result.put("DISTRICT_POLICE", syncDistrictPolice());
         result.put("POLICE", syncPolice());
         result.put("ILLUMINATION_LIGHT", syncIlluminationLights());
         result.put("SEONGNAM_CCTV", syncSeongnamCctv());
@@ -171,61 +163,6 @@ public class OpenDataService {
         }
 
         log.info("보안등 동기화 완료: {}건", facilities.size());
-        return facilities.size();
-    }
-
-    public int syncPoliceBoxes() {
-        log.info("치안센터 데이터 동기화 시작");
-        return syncPoliceType("/PoliceCenter", "PoliceCenter", "POLICE_BOX", policeBoxKey, "치안센터");
-    }
-
-    public int syncDistrictPolice() {
-        log.info("지구대 데이터 동기화 시작");
-        return syncPoliceType("/PoliceStation", "PoliceStation", "DISTRICT_POLICE", districtPoliceKey, "지구대");
-    }
-
-    private int syncPoliceType(String apiPath, String rootKey, String facilityType, String apiKey, String defaultName) {
-        List<SafetyFacility> facilities = new ArrayList<>();
-        int page = 1;
-
-        while (true) {
-            Map response = fetchApi(apiPath, apiKey, page, PAGE_SIZE);
-            if (response == null) break;
-
-            List<Map<String, Object>> rows = extractRows(response, rootKey);
-            if (rows == null || rows.isEmpty()) break;
-
-            for (Map<String, Object> row : rows) {
-                String lat = Objects.toString(row.get("REFINE_WGS84_LAT"), "");
-                String lng = Objects.toString(row.get("REFINE_WGS84_LOGT"), "");
-                String addr = Objects.toString(row.get("REFINE_ROADNM_ADDR"), "");
-                String name = Objects.toString(row.get("FACILITY_NM"), "");
-                if (name.isEmpty()) name = Objects.toString(row.get("INSTT_NM"), defaultName);
-
-                if (lat.isEmpty() || lng.isEmpty()) continue;
-                if (!isInSeongnam(lat, lng)) continue;
-
-                SafetyFacility f = new SafetyFacility();
-                f.setFacilityType(facilityType);
-                f.setName(name);
-                f.setAddress(addr.isEmpty() ? Objects.toString(row.get("REFINE_LOTNO_ADDR"), "") : addr);
-                f.setLatitude(Double.parseDouble(lat));
-                f.setLongitude(Double.parseDouble(lng));
-                f.setDataSource("경기데이터드림");
-                facilities.add(f);
-            }
-
-            int totalCount = extractTotalCount(response, rootKey);
-            if (page * PAGE_SIZE >= totalCount) break;
-            page++;
-        }
-
-        if (!facilities.isEmpty()) {
-            facilityRepository.deleteByFacilityTypeAndDataSource(facilityType, "경기데이터드림");
-            facilityRepository.saveAll(facilities);
-        }
-
-        log.info("{} 동기화 완료: {}건", facilityType, facilities.size());
         return facilities.size();
     }
 

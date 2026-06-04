@@ -34,18 +34,6 @@ public class OpenDataController {
         return ResponseEntity.ok(Map.of("SECURITY_LIGHT", count));
     }
 
-    @PostMapping("/sync/police-box")
-    public ResponseEntity<Map<String, Integer>> syncPoliceBoxes() {
-        int count = openDataService.syncPoliceBoxes();
-        return ResponseEntity.ok(Map.of("POLICE_BOX", count));
-    }
-
-    @PostMapping("/sync/district-police")
-    public ResponseEntity<Map<String, Integer>> syncDistrictPolice() {
-        int count = openDataService.syncDistrictPolice();
-        return ResponseEntity.ok(Map.of("DISTRICT_POLICE", count));
-    }
-
     @PostMapping("/sync/police")
     public ResponseEntity<Map<String, Integer>> syncPolice() {
         int count = openDataService.syncPolice();
