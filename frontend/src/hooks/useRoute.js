@@ -26,5 +26,10 @@ setRoutes(res.data);
     }
   }, []);
 
-  return { routes, loading, error, fetchRoutes };
+  const clearRoutes = useCallback(() => {
+    setRoutes([]);
+    setError(null);
+  }, []);
+
+  return { routes, loading, error, fetchRoutes, clearRoutes };
 }

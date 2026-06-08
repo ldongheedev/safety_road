@@ -17,6 +17,9 @@ frontend/build/
 # 임시 파일
 *.zip
 
+# ngrok 바이너리
+ngrok.exe
+
 # 팀 내부 문서
 TEAM_BRIEFING.md
 *보고서*.md

@@ -8,7 +8,13 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-html, body, #root {
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
   width: 100%;
   height: 100%;
 }
@@ -296,6 +302,64 @@ html, body, #root {
 
 
 
+/* ── 결과 헤더 (재검색 + 경로 요약) ── */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+}
+
+.results-route-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.results-point {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.results-point--origin { color: #22c55e; }
+.results-point--dest   { color: #3b82f6; }
+
+.results-arrow {
+  font-size: 14px;
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.btn-re-search {
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 14px;
+  border: 1.5px solid #4a90d9;
+  border-radius: 8px;
+  background: #fff;
+  color: #4a90d9;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-re-search:hover {
+  background: #4a90d9;
+  color: #fff;
+}
+
 /* ── SOS Floating Button ── */
 .sos-fab {
   position: fixed;
@@ -520,6 +584,8 @@ html, body, #root {
 .panel-handle {
   display: none;
 }
+.panel-handle-bar { display: none; }
+.panel-handle-chevron { display: none; }
 
 /* ── Mobile ── */
 @media (max-width: 768px) {
@@ -544,16 +610,102 @@ html, body, #root {
   .side-panel::-webkit-scrollbar { display: none; }
 
   .panel-handle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 0 8px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .panel-handle-bar {
     display: block;
     width: 40px;
     height: 4px;
     background: #ccc;
     border-radius: 2px;
-    margin: 4px auto 10px;
+  }
+
+  .panel-handle-chevron {
+    display: block;
+    font-size: 10px;
+    color: #aaa;
+    line-height: 1;
+  }
+
+  /* ── 패널 접힘/결과 상태 ── */
+  .side-panel {
+    transition: max-height 0.3s ease;
+  }
+
+  /* 결과 모드: 패널 더 크게 */
+  .side-panel--results {
+    max-height: 80vh;
+  }
+
+  .side-panel--results .route-result {
+    max-height: calc(80vh - 110px);
+  }
+
+  .results-point {
+    font-size: 14px;
+    max-width: 130px;
+  }
+
+  .btn-re-search {
+    height: 38px;
+    font-size: 14px;
+    padding: 0 16px;
+  }
+
+  .side-panel--collapsed {
+    max-height: 44px;
+    overflow: hidden;
+  }
+
+  .side-panel--collapsed .panel-handle-bar {
+    background: #bbb;
   }
 
   .route-result {
-    max-height: 30vh;
+    max-height: 40vh;
+  }
+
+  .route-card {
+    padding: 14px;
+  }
+
+  .route-option {
+    font-size: 16px;
+  }
+
+  .route-badge {
+    font-size: 13px;
+    padding: 3px 9px;
+  }
+
+  .route-card-body {
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .route-time {
+    font-size: 26px;
+  }
+
+  .route-distance {
+    font-size: 15px;
+  }
+
+  .route-safety-label {
+    font-size: 13px;
+    padding: 3px 10px;
+  }
+
+  .route-safety-score {
+    font-size: 18px;
   }
 
   .sos-fab {
@@ -567,6 +719,17 @@ html, body, #root {
   /* 내 위치 버튼: 패널 위에 고정 */
   .btn-my-location {
     bottom: calc(62vh + 12px);
+    transition: bottom 0.3s ease;
+  }
+
+  /* 패널 접혔을 때 버튼 내려오기 */
+  body:has(.side-panel--collapsed) .btn-my-location {
+    bottom: 60px;
+  }
+
+  /* 결과 모드: 80vh 패널 위로 버튼 이동 */
+  body:has(.side-panel--results) .btn-my-location {
+    bottom: calc(80vh + 12px);
   }
 
   /* 위험 알림 모바일 위치 조정 */

@@ -59,14 +59,14 @@ export default function SearchBar({ onSelectOrigin, onSelectDestination, originV
     setOriginText(place.name);
     setOriginResults([]);
     setActiveField(null);
-    onSelectOrigin(place.lat, place.lng);
+    onSelectOrigin(place.lat, place.lng, place.name);
   };
 
   const selectDest = (place) => {
     setDestText(place.name);
     setDestResults([]);
     setActiveField(null);
-    onSelectDestination(place.lat, place.lng);
+    onSelectDestination(place.lat, place.lng, place.name);
   };
 
   const handleCurrentLocation = () => {
@@ -77,7 +77,7 @@ export default function SearchBar({ onSelectOrigin, onSelectDestination, originV
         setOriginText('현재 위치');
         setOriginResults([]);
         setActiveField(null);
-        onSelectOrigin(latitude, longitude);
+        onSelectOrigin(latitude, longitude, '현재 위치');
       },
       () => alert('위치 정보를 가져올 수 없습니다.')
     );

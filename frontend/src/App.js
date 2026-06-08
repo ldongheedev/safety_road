@@ -24,6 +24,14 @@ export default function App() {
   const [zoom, setZoom] = useState(null);
   const [dangerZones, setDangerZones] = useState([]);
   const [alertZone, setAlertZone] = useState(null);
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const [resultsMode, setResultsMode] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+
+  const panelRef = useRef(null);
+  const panelHandleRef = useRef(null);
+  const dragStartY = useRef(null);
+  const dragStartHeight = useRef(null);
 
   const originMarkerRef = useRef(null);
   const destMarkerRef = useRef(null);
@@ -32,8 +40,15 @@ export default function App() {
   const lastAlertTimeRef = useRef(0);
   const prevInDangerRef = useRef(false);
 
-  const { routes, loading, error, fetchRoutes } = useRoute();
+  const { routes, loading, error, fetchRoutes, clearRoutes } = useRoute();
   const { location: currentLocation, error: locationError } = useCurrentLocation();
+
+  // 화면 크기 감지
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   // 위험구역 데이터 한 번만 로드
   useEffect(() => {
@@ -47,10 +62,13 @@ export default function App() {
       .catch(() => {});
   }, []);
 
-  // 추천 경로 자동 선택
+  // 추천 경로 자동 선택 + 결과 뷰 전환
   useEffect(() => {
-    const recommended = (routes ?? []).find((r) => r.recommended);
+    if (!routes || routes.length === 0) return;
+    const recommended = routes.find((r) => r.recommended);
     if (recommended) setSelectedRouteId(recommended.routeId);
+    setResultsMode(true);
+    setPanelCollapsed(false);
   }, [routes]);
 
   // 지도 뷰포트 변경 시 bounds/zoom 업데이트 (500ms 디바운스)
@@ -132,16 +150,18 @@ export default function App() {
     map.setCenter(new kakao.maps.LatLng(lat, lng));
   };
 
-  const handleSelectOrigin = useCallback((lat, lng) => {
+  const handleSelectOrigin = useCallback((lat, lng, label) => {
     setOrigin({ lat, lng });
+    if (label) setOriginLabel(label);
     placeMarker(
       originMarkerRef, lat, lng, '출발지',
       'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
     );
   }, [map]);
 
-  const handleSelectDestination = useCallback((lat, lng) => {
+  const handleSelectDestination = useCallback((lat, lng, label) => {
     setDestination({ lat, lng });
+    if (label) setDestLabel(label);
     placeMarker(
       destMarkerRef, lat, lng, '목적지',
       'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png'
@@ -163,8 +183,60 @@ export default function App() {
   const handleSearch = () => {
     if (!origin || !destination) return;
     setSelectedRouteId(null);
+    setResultsMode(false);
     fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
   };
+
+  const handleReSearch = () => {
+    setResultsMode(false);
+    setSelectedRouteId(null);
+    clearRoutes();
+    // 지도 위 출발/도착 마커 제거
+    if (originMarkerRef.current) { originMarkerRef.current.setMap(null); originMarkerRef.current = null; }
+    if (destMarkerRef.current)   { destMarkerRef.current.setMap(null);   destMarkerRef.current = null; }
+    setOrigin(null);
+    setDestination(null);
+    setOriginLabel(undefined);
+    setDestLabel(undefined);
+  };
+
+  const handleDragStart = (e) => {
+    dragStartY.current = e.touches[0].clientY;
+    dragStartHeight.current = panelRef.current?.getBoundingClientRect().height ?? 0;
+    if (panelRef.current) panelRef.current.style.transition = 'none';
+  };
+
+  const handleDragEnd = (e) => {
+    if (dragStartY.current === null) return;
+    const delta = e.changedTouches[0].clientY - dragStartY.current;
+    if (panelRef.current) {
+      panelRef.current.style.transition = '';
+      panelRef.current.style.maxHeight = '';
+    }
+    if (delta > 60) setPanelCollapsed(true);
+    else if (delta < -60) setPanelCollapsed(false);
+    dragStartY.current = null;
+  };
+
+  // non-passive로 등록해야 preventDefault()가 작동 → 지도 이동 차단
+  useEffect(() => {
+    const handle = panelHandleRef.current;
+    if (!handle) return;
+
+    const onTouchMove = (e) => {
+      if (dragStartY.current === null) return;
+      e.preventDefault();
+      const delta = e.touches[0].clientY - dragStartY.current;
+      const newHeight = Math.min(
+        Math.max(44, dragStartHeight.current - delta),
+        window.innerHeight * 0.62
+      );
+      if (panelRef.current) panelRef.current.style.maxHeight = `${newHeight}px`;
+    };
+
+    handle.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => handle.removeEventListener('touchmove', onTouchMove);
+  }, []);
 
   const handleCenterOnMe = () => {
     if (!map || !currentLocation) {
@@ -185,6 +257,7 @@ export default function App() {
       {/* 현재 위치로 이동 버튼 */}
       <button
         className={`btn-my-location${!currentLocation ? ' btn-my-location--inactive' : ''}`}
+        style={{ bottom: resultsMode ? 'calc(80vh + 12px)' : undefined }}
         onClick={handleCenterOnMe}
         title={locationError ? '위치 권한이 필요합니다' : currentLocation ? '내 위치로' : '위치 확인 중...'}
       >
@@ -197,70 +270,106 @@ export default function App() {
       )}
 
       {/* 좌측/하단 통합 패널 */}
-      <div className="side-panel">
-        <div className="panel-handle" />
-
-        <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
-          <button
-            style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: clickMode === 'origin' ? '#22c55e' : '#9ca3af' }}
-            onClick={() => setClickMode(clickMode === 'origin' ? null : 'origin')}
-          >
-            {clickMode === 'origin' ? '지도를 클릭하세요...' : '📍 출발지 선택'}
-          </button>
-          <button
-            style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: clickMode === 'destination' ? '#3b82f6' : '#9ca3af' }}
-            onClick={() => setClickMode(clickMode === 'destination' ? null : 'destination')}
-          >
-            {clickMode === 'destination' ? '지도를 클릭하세요...' : '📍 도착지 선택'}
-          </button>
-        </div>
-
-        <SearchBar
-          onSelectOrigin={handleSelectOrigin}
-          onSelectDestination={handleSelectDestination}
-          originValue={originLabel}
-          destValue={destLabel}
-        />
-
-        <button
-          className={`btn-search-route ${canSearch ? '' : 'btn-search-route--disabled'}`}
-          onClick={handleSearch}
-          disabled={!canSearch}
+      <div
+        ref={panelRef}
+        className={`side-panel${panelCollapsed ? ' side-panel--collapsed' : ''}${resultsMode ? ' side-panel--results' : ''}`}
+      >
+        <div
+          ref={panelHandleRef}
+          className="panel-handle"
+          onClick={() => setPanelCollapsed(v => !v)}
+          onTouchStart={handleDragStart}
+          onTouchEnd={handleDragEnd}
         >
-          {loading ? '경로 검색 중...' : '경로 검색'}
-        </button>
-
-        {error && <div className="route-error">{error}</div>}
-
-        <RouteResult
-          routes={routes ?? []}
-          selectedRouteId={selectedRouteId}
-          onSelectRoute={setSelectedRouteId}
-        />
-
-        {/* 토글 버튼 영역 */}
-        <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '10px' }}>
-          <button
-            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: showFacilities ? '#3b82f6' : '#9ca3af' }}
-            onClick={() => setShowFacilities((v) => !v)}
-          >
-            {zoom > 5 ? '시설 (줌인 필요)' : `시설 ${showFacilities ? 'ON' : 'OFF'}`}
-            {showFacilities && zoom <= 5 && (
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '5px' }}>
-                {[
-                  { color: '#3b82f6', label: 'CCTV' },
-                  { color: '#eab308', label: '보안등' },
-                  { color: '#ef4444', label: '경찰/치안' },
-                ].map(({ color, label }) => (
-                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px' }}>
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: color, border: '1px solid #fff', flexShrink: 0 }} />
-                    {label}
-                  </div>
-                ))}
-              </div>
-            )}
-          </button>
+          <span className="panel-handle-bar" />
+          <span className="panel-handle-chevron">{panelCollapsed ? '▲' : '▼'}</span>
         </div>
+
+        {(isMobile && resultsMode) ? (
+          /* ── 모바일 결과 뷰 ── */
+          <>
+            <div className="results-header">
+              <div className="results-route-summary">
+                <span className="results-point results-point--origin">{originLabel || '출발지'}</span>
+                <span className="results-arrow">→</span>
+                <span className="results-point results-point--dest">{destLabel || '목적지'}</span>
+              </div>
+              <button className="btn-re-search" onClick={handleReSearch}>재검색</button>
+            </div>
+            {error && <div className="route-error">{error}</div>}
+            <RouteResult
+              routes={routes ?? []}
+              selectedRouteId={selectedRouteId}
+              onSelectRoute={setSelectedRouteId}
+            />
+          </>
+        ) : (
+          /* ── 검색 뷰 (데스크톱 항상 / 모바일 검색 전) ── */
+          <>
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+              <button
+                style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: clickMode === 'origin' ? '#22c55e' : '#9ca3af' }}
+                onClick={() => setClickMode(clickMode === 'origin' ? null : 'origin')}
+              >
+                {clickMode === 'origin' ? '지도를 클릭하세요...' : '📍 출발지 선택'}
+              </button>
+              <button
+                style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: clickMode === 'destination' ? '#3b82f6' : '#9ca3af' }}
+                onClick={() => setClickMode(clickMode === 'destination' ? null : 'destination')}
+              >
+                {clickMode === 'destination' ? '지도를 클릭하세요...' : '📍 도착지 선택'}
+              </button>
+            </div>
+
+            <SearchBar
+              onSelectOrigin={handleSelectOrigin}
+              onSelectDestination={handleSelectDestination}
+              originValue={originLabel}
+              destValue={destLabel}
+            />
+
+            <button
+              className={`btn-search-route ${canSearch ? '' : 'btn-search-route--disabled'}`}
+              onClick={handleSearch}
+              disabled={!canSearch}
+            >
+              {loading ? '경로 검색 중...' : '경로 검색'}
+            </button>
+
+            {error && <div className="route-error">{error}</div>}
+
+            {/* 데스크톱: 검색 결과를 폼 아래에 바로 표시 */}
+            <RouteResult
+              routes={routes ?? []}
+              selectedRouteId={selectedRouteId}
+              onSelectRoute={setSelectedRouteId}
+            />
+
+            {/* 토글 버튼 영역 */}
+            <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '10px' }}>
+              <button
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', background: showFacilities ? '#3b82f6' : '#9ca3af' }}
+                onClick={() => setShowFacilities((v) => !v)}
+              >
+                {zoom > 5 ? '시설 (줌인 필요)' : `시설 ${showFacilities ? 'ON' : 'OFF'}`}
+                {showFacilities && zoom <= 5 && (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '5px' }}>
+                    {[
+                      { color: '#3b82f6', label: 'CCTV' },
+                      { color: '#eab308', label: '보안등' },
+                      { color: '#ef4444', label: '경찰/치안' },
+                    ].map(({ color, label }) => (
+                      <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px' }}>
+                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: color, border: '1px solid #fff', flexShrink: 0 }} />
+                        {label}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <RouteOverlay map={map} routes={routes ?? []} selectedRouteId={selectedRouteId} />
