@@ -18,7 +18,7 @@ public class SafetyFacilityController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Map<String, Object>>> getFacilitiesInBounds(
+    public ResponseEntity<?> getFacilitiesInBounds(
             @RequestParam double lat1,
             @RequestParam double lng1,
             @RequestParam double lat2,
@@ -26,21 +26,25 @@ public class SafetyFacilityController {
             @RequestParam(defaultValue = "200") int limit,
             @RequestParam(required = false) String type) {
 
-        int safeLimit = Math.min(limit, 1000);
-        List<SafetyFacility> facilities = (type != null && !type.isBlank())
-                ? facilityRepository.findByTypeWithinBounds(lat1, lng1, lat2, lng2, type, safeLimit)
-                : facilityRepository.findWithinBounds(lat1, lng1, lat2, lng2, safeLimit);
+        try {
+            int safeLimit = Math.min(limit, 1000);
+            List<SafetyFacility> facilities = (type != null && !type.isBlank())
+                    ? facilityRepository.findByTypeWithinBounds(lat1, lng1, lat2, lng2, type, safeLimit)
+                    : facilityRepository.findWithinBounds(lat1, lng1, lat2, lng2, safeLimit);
 
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (SafetyFacility f : facilities) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", f.getId());
-            map.put("facilityType", f.getFacilityType());
-            map.put("lat", f.getLatitude());
-            map.put("lng", f.getLongitude());
-            result.add(map);
+            List<Map<String, Object>> result = new ArrayList<>();
+            for (SafetyFacility f : facilities) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", f.getId());
+                map.put("facilityType", f.getFacilityType());
+                map.put("lat", f.getLatitude());
+                map.put("lng", f.getLongitude());
+                result.add(map);
+            }
+
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
         }
-
-        return ResponseEntity.ok(result);
     }
 }

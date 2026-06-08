@@ -4,9 +4,12 @@ import KakaoMap from './components/KakaoMap';
 import SearchBar from './components/SearchBar';
 import RouteOverlay from './components/Map/RouteOverlay';
 import FacilityOverlay from './components/Map/FacilityOverlay';
+import LocationOverlay from './components/Map/LocationOverlay';
 import RouteResult from './components/Route/RouteResult';
 import useRoute from './hooks/useRoute';
+import useCurrentLocation from './hooks/useCurrentLocation';
 import SOSButton from './components/SOSButton';
+import DangerAlert from './components/DangerAlert';
 
 export default function App() {
   const [map, setMap] = useState(null);
@@ -19,14 +22,35 @@ export default function App() {
   const [destLabel, setDestLabel] = useState(undefined);
   const [bounds, setBounds] = useState(null);
   const [zoom, setZoom] = useState(null);
+  const [dangerZones, setDangerZones] = useState([]);
+  const [alertZone, setAlertZone] = useState(null);
+
   const originMarkerRef = useRef(null);
   const destMarkerRef = useRef(null);
   const boundsTimerRef = useRef(null);
-  const { routes, loading, error, fetchRoutes } = useRoute();
+  const initialCenteredRef = useRef(false);
+  const lastAlertTimeRef = useRef(0);
+  const prevInDangerRef = useRef(false);
 
+  const { routes, loading, error, fetchRoutes } = useRoute();
+  const { location: currentLocation, error: locationError } = useCurrentLocation();
+
+  // 위험구역 데이터 한 번만 로드
   useEffect(() => {
-    const recommendedRoute = (routes ?? []).find(r => r.recommended);
-    if (recommendedRoute) setSelectedRouteId(recommendedRoute.routeId);
+    fetch('/api/danger-zones')
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setDangerZones(data.filter((z) => z.riskLevel === 'HIGH'));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // 추천 경로 자동 선택
+  useEffect(() => {
+    const recommended = (routes ?? []).find((r) => r.recommended);
+    if (recommended) setSelectedRouteId(recommended.routeId);
   }, [routes]);
 
   // 지도 뷰포트 변경 시 bounds/zoom 업데이트 (500ms 디바운스)
@@ -45,7 +69,7 @@ export default function App() {
       }, 500);
     };
 
-    update(); // 초기값 세팅
+    update();
     kakao.maps.event.addListener(map, 'bounds_changed', update);
     kakao.maps.event.addListener(map, 'zoom_changed', update);
 
@@ -56,6 +80,38 @@ export default function App() {
     };
   }, [map]);
 
+  // 첫 위치 수신 시 지도 중심 이동
+  useEffect(() => {
+    if (!map || !currentLocation || initialCenteredRef.current) return;
+    const kakao = window.kakao;
+    map.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
+    initialCenteredRef.current = true;
+  }, [map, currentLocation]);
+
+  // 위험구역 진입 감지
+  useEffect(() => {
+    if (!currentLocation || !dangerZones.length) return;
+
+    const inDangerZone = dangerZones.find((zone) => {
+      const [minLat, minLng] = zone.bounds[0];
+      const [maxLat, maxLng] = zone.bounds[2];
+      return (
+        currentLocation.lat >= minLat && currentLocation.lat <= maxLat &&
+        currentLocation.lng >= minLng && currentLocation.lng <= maxLng
+      );
+    });
+
+    const now = Date.now();
+    const wasInDanger = prevInDangerRef.current;
+
+    if (inDangerZone && !wasInDanger && now - lastAlertTimeRef.current > 30000) {
+      setAlertZone(inDangerZone);
+      lastAlertTimeRef.current = now;
+    }
+
+    prevInDangerRef.current = !!inDangerZone;
+  }, [currentLocation, dangerZones]);
+
   const handleMapReady = useCallback((mapInstance) => {
     setMap(mapInstance);
   }, []);
@@ -63,24 +119,17 @@ export default function App() {
   const placeMarker = (markerRef, lat, lng, title, imageSrc) => {
     if (!map) return;
     const kakao = window.kakao;
+    if (markerRef.current) markerRef.current.setMap(null);
 
-    if (markerRef.current) {
-      markerRef.current.setMap(null);
-    }
-
-    const imageSize = new kakao.maps.Size(36, 44);
-    const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-    const position = new kakao.maps.LatLng(lat, lng);
-
+    const markerImage = new kakao.maps.MarkerImage(imageSrc, new kakao.maps.Size(36, 44));
     const marker = new kakao.maps.Marker({
-      position,
+      position: new kakao.maps.LatLng(lat, lng),
       image: markerImage,
       title,
     });
-
     marker.setMap(map);
     markerRef.current = marker;
-    map.setCenter(position);
+    map.setCenter(new kakao.maps.LatLng(lat, lng));
   };
 
   const handleSelectOrigin = useCallback((lat, lng) => {
@@ -114,7 +163,17 @@ export default function App() {
   const handleSearch = () => {
     if (!origin || !destination) return;
     setSelectedRouteId(null);
-fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
+    fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
+  };
+
+  const handleCenterOnMe = () => {
+    if (!map || !currentLocation) {
+      if (locationError) alert('위치 권한이 거부되었거나 HTTPS 환경이 아닙니다.\n브라우저 설정에서 위치 권한을 허용해주세요.');
+      return;
+    }
+    const kakao = window.kakao;
+    map.setCenter(new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng));
+    map.setLevel(3);
   };
 
   const canSearch = origin && destination && !loading;
@@ -123,8 +182,24 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <KakaoMap onMapReady={handleMapReady} onMapClick={handleMapClick} clickMode={clickMode} />
 
-      {/* 좌측 통합 패널 */}
+      {/* 현재 위치로 이동 버튼 */}
+      <button
+        className={`btn-my-location${!currentLocation ? ' btn-my-location--inactive' : ''}`}
+        onClick={handleCenterOnMe}
+        title={locationError ? '위치 권한이 필요합니다' : currentLocation ? '내 위치로' : '위치 확인 중...'}
+      >
+        {locationError ? '🚫' : currentLocation ? '📍' : '⏳'}
+      </button>
+
+      {/* 위험구역 진입 알림 */}
+      {alertZone && (
+        <DangerAlert zone={alertZone} onDismiss={() => setAlertZone(null)} />
+      )}
+
+      {/* 좌측/하단 통합 패널 */}
       <div className="side-panel">
+        <div className="panel-handle" />
+
         <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
           <button
             style={{ flex: 1, padding: '8px 4px', borderRadius: '8px', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', background: clickMode === 'origin' ? '#22c55e' : '#9ca3af' }}
@@ -188,19 +263,9 @@ fetchRoutes(origin.lat, origin.lng, destination.lat, destination.lng);
         </div>
       </div>
 
-      <RouteOverlay
-        map={map}
-        routes={routes ?? []}
-        selectedRouteId={selectedRouteId}
-      />
-
-      <FacilityOverlay
-        map={map}
-        visible={showFacilities}
-        bounds={bounds}
-        zoom={zoom}
-      />
-
+      <RouteOverlay map={map} routes={routes ?? []} selectedRouteId={selectedRouteId} />
+      <FacilityOverlay map={map} visible={showFacilities} bounds={bounds} zoom={zoom} />
+      <LocationOverlay map={map} location={currentLocation} />
       <SOSButton />
     </div>
   );

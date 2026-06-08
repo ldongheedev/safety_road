@@ -75,7 +75,7 @@ public class SafetyFacilityRepository {
     public int countPoliceWithinRadius(double lat, double lng, double radius) {
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM safety_facility " +
-                "WHERE facility_type IN ('POLICE_BOX', 'DISTRICT_POLICE') " +
+                "WHERE facility_type = 'POLICE' " +
                 "AND ST_DWithin(location, ST_SetSRID(ST_Point(?, ?), 4326), ?)",
                 Integer.class, lng, lat, radius);
         return count != null ? count : 0;
@@ -84,7 +84,7 @@ public class SafetyFacilityRepository {
     public int countPoliceWithinBounds(double lat1, double lng1, double lat2, double lng2) {
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM safety_facility " +
-                "WHERE facility_type IN ('POLICE_BOX', 'DISTRICT_POLICE') " +
+                "WHERE facility_type = 'POLICE' " +
                 "AND ST_Within(location, ST_MakeEnvelope(?, ?, ?, ?, 4326))",
                 Integer.class, lng1, lat1, lng2, lat2);
         return count != null ? count : 0;

@@ -1,19 +1,5 @@
 package comp.soft.backend.service;
 
-import comp.soft.backend.entity.SafetyFacility;
-import comp.soft.backend.repository.SafetyFacilityRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,7 +10,28 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import comp.soft.backend.entity.SafetyFacility;
+import comp.soft.backend.repository.SafetyFacilityRepository;
 
 @Service
 public class OpenDataService {
@@ -47,16 +54,10 @@ public class OpenDataService {
     @Value("${opendata.security-light-location-key}")
     private String securityLightLocationKey;
 
-    @Value("${opendata.security-light-stats-key}")
-    private String securityLightStatsKey;
-
-    @Value("${opendata.streetlight-stats-key}")
-    private String streetlightStatsKey;
-
     @Value("${opendata.police-key}")
     private String policeKey;
 
-    @Value("${opendata.illumination-key}")
+    @Value("${opendata.illumination-key:}")
     private String illuminationKey;
 
     public OpenDataService(SafetyFacilityRepository facilityRepository) {

@@ -42,16 +42,8 @@ export default function FacilityOverlay({ map, visible, bounds, zoom }) {
       tooltipRef.current = tooltip;
     };
 
-    window.__closeFacilityTooltip = () => {
-      if (tooltipRef.current) {
-        tooltipRef.current.setMap(null);
-        tooltipRef.current = null;
-      }
-    };
-
     return () => {
       delete window.__showFacilityTooltip;
-      delete window.__closeFacilityTooltip;
     };
   }, [map]);
 

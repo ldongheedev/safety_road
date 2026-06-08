@@ -6,6 +6,8 @@ import comp.soft.backend.entity.DangerZone;
 import comp.soft.backend.external.TmapClient;
 import comp.soft.backend.repository.DangerZoneRepository;
 import comp.soft.backend.repository.SafetyFacilityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.UUID;
 
 @Service
 public class RouteService {
+
+    private static final Logger log = LoggerFactory.getLogger(RouteService.class);
 
     private final TmapClient tmapClient;
     private final DangerZoneRepository dangerZoneRepository;
@@ -78,15 +82,20 @@ public class RouteService {
             double lat = coordinates.get(i)[0];
             double lng = coordinates.get(i)[1];
 
-            List<DangerZone> zones = dangerZoneRepository.findByPoint(lat, lng);
-            if (zones.isEmpty()) {
+            try {
+                List<DangerZone> zones = dangerZoneRepository.findByPoint(lat, lng);
+                if (zones.isEmpty()) {
+                    totalScore += 50.0;
+                } else {
+                    double zoneScore = zones.stream()
+                            .mapToDouble(z -> z.getSafetyScore().doubleValue())
+                            .average()
+                            .orElse(50.0);
+                    totalScore += zoneScore;
+                }
+            } catch (Exception e) {
+                log.warn("위험구역 점수 조회 실패 (lat={}, lng={}): {}", lat, lng, e.getMessage());
                 totalScore += 50.0;
-            } else {
-                double zoneScore = zones.stream()
-                        .mapToDouble(z -> z.getSafetyScore().doubleValue())
-                        .average()
-                        .orElse(50.0);
-                totalScore += zoneScore;
             }
             sampleCount++;
         }
@@ -109,10 +118,15 @@ public class RouteService {
             double lat = coordinates.get(i)[0];
             double lng = coordinates.get(i)[1];
 
-            int facilityCount = safetyFacilityRepository.countWithinRadius(lat, lng, RADIUS_DEGREES);
-            int policeCount = safetyFacilityRepository.countPoliceWithinRadius(lat, lng, POLICE_RADIUS_DEGREES);
-            int count = facilityCount + policeCount * POLICE_WEIGHT;
-            totalScore += facilityCountToScore(count);
+            try {
+                int facilityCount = safetyFacilityRepository.countWithinRadius(lat, lng, RADIUS_DEGREES);
+                int policeCount = safetyFacilityRepository.countPoliceWithinRadius(lat, lng, POLICE_RADIUS_DEGREES);
+                int count = facilityCount + policeCount * POLICE_WEIGHT;
+                totalScore += facilityCountToScore(count);
+            } catch (Exception e) {
+                log.warn("시설 밀도 점수 조회 실패 (lat={}, lng={}): {}", lat, lng, e.getMessage());
+                totalScore += 50.0;
+            }
             sampleCount++;
         }
 
