@@ -568,6 +568,22 @@ html, body {
   color: #555;
 }
 
+.danger-alert-gauge-bg {
+  width: 100%;
+  height: 3px;
+  background: #f0f0f0;
+  border-radius: 2px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.danger-alert-gauge-fill {
+  height: 100%;
+  background: #f44336;
+  border-radius: 2px;
+  transition: width 0.05s linear;
+}
+
 .danger-alert-close {
   flex-shrink: 0;
   background: none;

@@ -19,32 +19,32 @@ export default function RouteOverlay({ map, routes, selectedRouteId }) {
 
     sorted.forEach((route) => {
       const isSelected = route.routeId === selectedRouteId;
-      const color = getLevelColor(route.safetyScore);
 
+      // 선택된 경로만 표시 (선택 전에는 전체 표시)
+      if (selectedRouteId && !isSelected) return;
+
+      const color = getLevelColor(route.safetyScore);
       const path = route.coordinates.map(
         ([lat, lng]) => new kakao.maps.LatLng(lat, lng)
       );
 
-      if (isSelected) {
-        const outline = new kakao.maps.Polyline({
-          path,
-          strokeColor: '#000',
-          strokeWeight: 10,
-          strokeOpacity: 0.25,
-          strokeStyle: 'solid',
-        });
-        outline.setMap(map);
-        polylinesRef.current.push(outline);
-      }
+      const outline = new kakao.maps.Polyline({
+        path,
+        strokeColor: '#000',
+        strokeWeight: 10,
+        strokeOpacity: 0.25,
+        strokeStyle: 'solid',
+      });
+      outline.setMap(map);
+      polylinesRef.current.push(outline);
 
       const polyline = new kakao.maps.Polyline({
         path,
         strokeColor: color,
-        strokeWeight: isSelected ? 7 : 5,
-        strokeOpacity: isSelected ? 1 : 0.55,
+        strokeWeight: 7,
+        strokeOpacity: 1,
         strokeStyle: 'solid',
       });
-
       polyline.setMap(map);
       polylinesRef.current.push(polyline);
     });

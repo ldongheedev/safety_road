@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: '맑은 고딕', 'Malgun Gothic', sans-serif;
+    font-size: 11pt;
+    color: #000;
+    padding: 40px 60px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    font-size: 18pt;
+    font-weight: bold;
+    letter-spacing: 4px;
+    margin-bottom: 28px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+  }
+  td, th {
+    border: 1px solid #333;
+    padding: 8px 12px;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .section-header td {
+    background-color: #d9d9d9;
+    font-weight: bold;
+    text-align: center;
+    font-size: 11pt;
+    padding: 7px;
+  }
+  .label {
+    font-weight: bold;
+    white-space: nowrap;
+    width: 70px;
+    text-align: center;
+    background-color: #f5f5f5;
+  }
+  .name-col {
+    width: 80px;
+    text-align: center;
+    font-weight: bold;
+    background-color: #fafafa;
+  }
+  .progress-bar-wrap {
+    margin-top: 6px;
+  }
+  .progress-bar-bg {
+    background: #e0e0e0;
+    border-radius: 6px;
+    height: 16px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #bbb;
+  }
+  .progress-bar-fill {
+    background: linear-gradient(90deg, #4a90d9, #2db400);
+    height: 100%;
+    width: 87%;
+    border-radius: 6px 0 0 6px;
+  }
+  .progress-label {
+    font-size: 10pt;
+    color: #333;
+    margin-top: 3px;
+  }
+  .issue { margin-bottom: 6px; }
+  @media print {
+    body { padding: 20px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>프로젝트 구현 06월 08일 주간 보고서</h1>
+
+<table>
+  <tr>
+    <td class="label">조 명</td>
+    <td>김이상궁</td>
+  </tr>
+  <tr>
+    <td class="label">기 간</td>
+    <td>2026년 06월 02일 &nbsp;~&nbsp; 2026년 06월 08일</td>
+  </tr>
+  <tr>
+    <td class="label">조 장</td>
+    <td>김령균</td>
+  </tr>
+
+  <!-- 금주 실적 -->
+  <tr class="section-header">
+    <td colspan="2">금주 스터디 및 진행 실적</td>
+  </tr>
+  <tr>
+    <th class="name-col">이름</th>
+    <th>계획 대비 실적</th>
+  </tr>
+  <tr>
+    <td class="name-col">김령균</td>
+    <td>
+      위험구역 재계산 실행 및 안전점수 계산 로직 정상 동작 검증,
+      ddl-auto validate 전환 및 운영 환경 설정 정리
+    </td>
+  </tr>
+  <tr>
+    <td class="name-col">이동희</td>
+    <td>
+      syncPoliceBoxes(), syncDistrictPolice() 등 dead code 완전 제거 완료,
+      JdbcTemplate 전환 후 전체 API 정상 동작 최종 검증
+    </td>
+  </tr>
+  <tr>
+    <td class="name-col">이시우</td>
+    <td>
+      추가 편의시설 API 탐색 완료,
+      프론트엔드 UI 마무리
+    </td>
+  </tr>
+
+  <!-- 차주 계획 -->
+  <tr class="section-header">
+    <td colspan="2">차주 스터디 및 진행 계획 (최종 발표 준비)</td>
+  </tr>
+  <tr>
+    <th class="name-col">이름</th>
+    <th>계 &nbsp;&nbsp;&nbsp; 획</th>
+  </tr>
+  <tr>
+    <td class="name-col">김령균</td>
+    <td>
+      POLICE 시설 타입 불일치 버그 수정 (POLICE_BOX·DISTRICT_POLICE → POLICE),
+      illumination-key 미설정 시 서버 기동 실패 방지 처리,
+      운영 배포 환경 구성 및 최종 발표 자료 백엔드 파트 작성
+    </td>
+  </tr>
+  <tr>
+    <td class="name-col">이동희</td>
+    <td>
+      ngrok HTTPS 고정 도메인 환경 구축 (모바일 위치 권한 획득),
+      위험구역 진입 알림 기능 구현 (DangerAlert 컴포넌트, 30초 쿨다운, 자동 닫힘),
+      실시간 위치 추적 구현 (useCurrentLocation hook, watchPosition API)
+    </td>
+  </tr>
+  <tr>
+    <td class="name-col">이시우</td>
+    <td>
+      모바일 반응형 UI 전면 구현 (bottom sheet 패턴, 드래그 제스처로 패널 접기/펼치기),
+      경로 검색 결과 UX 개선 — 모바일 전용 결과 뷰(80vh) + 재검색 기능, 웹(데스크톱)은 기존 레이아웃 유지로 분기,
+      현재 위치 표시 마커(파란 점) 및 내 위치 이동 버튼 추가, 모바일 지도 드래그 버그 수정
+    </td>
+  </tr>
+
+  <!-- 진척사항 -->
+  <tr class="section-header">
+    <td colspan="2">프로젝트 진척사항</td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding: 14px 16px; line-height: 2.0;">
+      <div style="font-weight:bold; margin-bottom:6px;">■ 전체 완성도&nbsp;&nbsp;<span style="color:#2db400;">약 87% 완료</span></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>
+        <div class="progress-label">핵심 기능 구현 완료 · 최종 발표 준비 단계 진입</div>
+      </div>
+      <br>
+      <div>
+        ✅ 안전 경로 추천 서비스 전 기능 구현 완료 (경로 검색, 안전점수, 시설 마커)<br>
+        ✅ 실시간 위치 추적 및 현재 위치 표시 마커 구현<br>
+        ✅ 위험구역 진입 시 알림 배너 기능 구현<br>
+        ✅ 모바일 반응형 UI (bottom sheet, 드래그 제스처) 완성<br>
+        ✅ 모바일/웹 경로 결과 UX 분기 처리 완료<br>
+        ✅ HTTPS 모바일 테스트 환경 (ngrok 고정 도메인) 구축<br>
+        ⬜ 위험구역 안전점수 신규 데이터 기반 재계산 (진행 중)<br>
+        ⬜ 운영 서버 최종 배포<br>
+        ⬜ 최종 발표 자료 제작
+      </div>
+    </td>
+  </tr>
+
+  <!-- 이슈 -->
+  <tr class="section-header">
+    <td colspan="2">이슈 사항</td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding: 14px 16px; line-height: 2.0;">
+      <div class="issue"># 위험구역 재계산 미완료 — 신규 CCTV/보안등 데이터 추가 후 안전점수 재산정 필요, 차주 처리 예정.</div>
+      <div class="issue"># 수집된 경찰/치안 시설 데이터 35건으로 타 시설 대비 적어 안전점수 정확도 보완 필요.</div>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

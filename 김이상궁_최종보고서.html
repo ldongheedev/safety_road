@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: '맑은 고딕', 'Malgun Gothic', sans-serif;
+    font-size: 11pt;
+    color: #000;
+    padding: 50px 70px;
+    max-width: 860px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+  h1.main-title {
+    text-align: center;
+    font-size: 22pt;
+    font-weight: bold;
+    letter-spacing: 6px;
+    margin-bottom: 10px;
+    padding-bottom: 16px;
+    border-bottom: 3px solid #333;
+  }
+  h1.main-title .subtitle {
+    display: block;
+    font-size: 13pt;
+    font-weight: normal;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    color: #444;
+  }
+  .meta-box {
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+    margin: 16px 0 40px;
+    font-size: 10pt;
+    color: #555;
+  }
+  h2 {
+    font-size: 15pt;
+    font-weight: bold;
+    border-left: 5px solid #2a6db5;
+    padding-left: 12px;
+    margin: 40px 0 16px;
+    color: #1a1a2e;
+  }
+  h3 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin: 24px 0 10px;
+    color: #2a2a2a;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 4px;
+  }
+  h4 {
+    font-size: 11pt;
+    font-weight: bold;
+    margin: 16px 0 6px;
+    color: #333;
+  }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 24px; margin-bottom: 10px; }
+  li { margin-bottom: 4px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 10.5pt;
+  }
+  th {
+    background: #2a6db5;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: center;
+    font-weight: bold;
+  }
+  td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f7f9fc; }
+  .img-placeholder {
+    width: 100%;
+    min-height: 180px;
+    background: #f0f4f8;
+    border: 2px dashed #aac;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #778;
+    font-size: 12pt;
+    margin: 12px 0;
+  }
+  .tag {
+    display: inline-block;
+    background: #e8f0fe;
+    color: #2a6db5;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 9.5pt;
+    margin: 2px 2px;
+  }
+  .tag-green { background: #e6f9ee; color: #1a7a3c; }
+  .tag-red   { background: #fdecea; color: #b71c1c; }
+  .code-box {
+    background: #f4f4f4;
+    border-left: 4px solid #2a6db5;
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-family: 'Consolas', 'D2Coding', monospace;
+    font-size: 9.5pt;
+    white-space: pre;
+    overflow-x: auto;
+    margin: 8px 0 16px;
+    color: #1a1a1a;
+  }
+  .contribution-bar {
+    display: flex;
+    height: 24px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+  }
+  .bar-a { background: #2a6db5; width: 40%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 9pt; font-weight: bold; }
+  .bar-b { background: #22a05c; width: 35%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 9pt; font-weight: bold; }
+  .bar-c { background: #e67e22; width: 25%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 9pt; font-weight: bold; }
+  .section-divider { border: none; border-top: 2px solid #e0e0e0; margin: 40px 0; }
+  .highlight { background: #fff8e1; padding: 2px 6px; border-radius: 3px; }
+  @media print {
+    body { padding: 20px 40px; }
+    h2 { page-break-before: auto; }
+  }
+</style>
+</head>
+<body>
+
+<h1 class="main-title">
+  프로젝트 최종 보고서
+  <span class="subtitle">SafetyRoad — 공공시설 기반 안전 경로 추천 서비스</span>
+</h1>
+<div class="meta-box">
+  <span>조 명: 김이상궁</span>
+  <span>조 장: 김령균</span>
+  <span>제출일: 2026년 06월</span>
+</div>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>1. 프로젝트 개요</h2>
+
+<h3>1-1. 팀 소개</h3>
+<table>
+  <tr><th>구분</th><th>내용</th></tr>
+  <tr><td>조 명</td><td>김이상궁</td></tr>
+  <tr><td>조 장</td><td>김령균</td></tr>
+  <tr><td>팀 원</td><td>이동희, 이시우</td></tr>
+  <tr><td>개발 기간</td><td>2026년 03월 ~ 2026년 06월</td></tr>
+  <tr><td>대상 지역</td><td>경기도 성남시 분당구</td></tr>
+</table>
+
+<h3>1-2. 역할 분담 및 프로젝트 기여도</h3>
+<table>
+  <tr><th>이름</th><th>역할</th><th>주요 담당 업무</th><th>기여도</th></tr>
+  <tr>
+    <td><b>김령균</b><br>(조장)</td>
+    <td>백엔드 리드</td>
+    <td>
+      DB 설계 및 PostGIS 구성, 안전점수 계산 알고리즘 설계,<br>
+      위험구역 경계 산출, 성남시 공공데이터 수집 총괄,<br>
+      Spring Boot API 서버 구축, 운영 환경 설정
+    </td>
+    <td style="text-align:center">40%</td>
+  </tr>
+  <tr>
+    <td><b>이동희</b></td>
+    <td>백엔드 개발</td>
+    <td>
+      JPA → JdbcTemplate 전환, 공공데이터 Open API 연동,<br>
+      CCTV·보안등·경찰 데이터 수집 자동화,<br>
+      dead code 정리 및 API 검증, ngrok HTTPS 환경 구축,<br>
+      실시간 위치 추적·위험구역 알림 기능 구현
+    </td>
+    <td style="text-align:center">35%</td>
+  </tr>
+  <tr>
+    <td><b>이시우</b></td>
+    <td>프론트엔드 개발</td>
+    <td>
+      React + Kakao Maps 기반 지도 UI 전체 구현,<br>
+      경로 검색 결과 화면, 시설 마커 ON/OFF 토글,<br>
+      모바일 반응형 UI (bottom sheet, 드래그 제스처),<br>
+      경로 결과 UX 개선 (모바일/웹 분기)
+    </td>
+    <td style="text-align:center">25%</td>
+  </tr>
+</table>
+
+<div class="contribution-bar">
+  <div class="bar-a">김령균 40%</div>
+  <div class="bar-b">이동희 35%</div>
+  <div class="bar-c">이시우 25%</div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>2. 프로젝트 소개</h2>
+
+<h3>2-1. 프로젝트 명</h3>
+<p><b>SafetyRoad</b> — 공공시설 기반 안전 경로 추천 서비스</p>
+
+<h3>2-2. 주제 및 선정 이유</h3>
+<p>
+  야간 보행 시 범죄 노출 위험, 어두운 골목 등 안전 취약 구간에 대한 사회적 우려가 높아지고 있습니다.
+  기존 네비게이션 서비스는 최단·최소 시간 경로만 제공하고 <span class="highlight">보행 안전성은 고려하지 않습니다.</span>
+  본 프로젝트는 성남시 분당구 내 CCTV, 보안등, 경찰·치안 시설 등 공공 안전시설 데이터를 활용해
+  경로별 안전점수를 산출하고, 가장 안전한 보행 경로를 추천하는 서비스를 개발합니다.
+</p>
+
+<h3>2-3. 특장점</h3>
+<ul>
+  <li><b>실데이터 기반 안전점수</b> — 국가공공데이터포털의 CCTV 약 10,000건, 보안등 약 13,000건, 경찰/치안 35건을 실제 수집·저장하여 경로 안전성 계산에 활용</li>
+  <li><b>복수 경로 비교</b> — T맵 API로 대로우선·최단·최소 시간 등 다양한 경로를 동시에 제시하고 경로마다 안전점수를 부여해 사용자가 직접 선택 가능</li>
+  <li><b>실시간 위치 추적</b> — GPS 기반 현재 위치를 지도에 실시간 표시하고, 위험구역 진입 시 즉시 알림 배너 제공</li>
+  <li><b>모바일 완전 지원</b> — 반응형 bottom sheet UI, 드래그 제스처, HTTPS(ngrok) 환경으로 스마트폰에서도 동일한 기능 제공</li>
+  <li><b>SOS 긴급 신고 버튼</b> — 긴급상황 발생 시 카운트다운 후 신고 가능한 FAB 버튼 제공</li>
+</ul>
+
+<h3>2-4. 개발 일정</h3>
+<table>
+  <tr><th>주차</th><th>기간</th><th>주요 내용</th></tr>
+  <tr><td>1~3주차</td><td>03월</td><td>주제 선정, 요구사항 분석, 기술 스택 결정, 개발 환경 구성</td></tr>
+  <tr><td>4~6주차</td><td>04월</td><td>DB 설계, 공공데이터 API 연동 및 수집, Spring Boot 기본 API 구현</td></tr>
+  <tr><td>7~9주차</td><td>05월 초</td><td>안전점수 알고리즘 구현, 경로 API 연동(T맵), 프론트엔드 지도 UI 구현</td></tr>
+  <tr><td>10~11주차</td><td>05월 중</td><td>시설 마커 ON/OFF 구현, JPA→JdbcTemplate 전환, 코드 정리</td></tr>
+  <tr><td>12~13주차</td><td>06월 초</td><td>모바일 반응형, 실시간 위치 추적, 위험구역 알림, 버그 수정</td></tr>
+  <tr><td>14주차</td><td>06월 중</td><td>최종 테스트, 배포, 발표 준비</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>3. 프로젝트 설계</h2>
+
+<h3>3-1. 아키텍처 설계</h3>
+
+<h4>서버 구성 및 통신 메커니즘</h4>
+<div class="img-placeholder">[ 시스템 아키텍처 다이어그램 이미지 첨부 ]</div>
+
+<table>
+  <tr><th>계층</th><th>기술</th><th>역할</th></tr>
+  <tr><td>프론트엔드</td><td>React 18, Kakao Maps JS API</td><td>지도 렌더링, 경로 표시, 사용자 인터페이스</td></tr>
+  <tr><td>백엔드</td><td>Spring Boot 4.0.6, Java 25</td><td>REST API 서버, 경로 안전점수 계산, 외부 API 연동</td></tr>
+  <tr><td>데이터베이스</td><td>PostgreSQL 18 + PostGIS</td><td>공간 데이터 저장, 반경 내 시설 쿼리, 위험구역 관리</td></tr>
+  <tr><td>외부 API</td><td>T맵 API, 국가공공데이터포털</td><td>경로 탐색, CCTV·보안등·경찰 데이터 수집</td></tr>
+  <tr><td>인프라</td><td>AWS EC2 (예정), ngrok (개발)</td><td>서버 운영 및 HTTPS 모바일 테스트 환경</td></tr>
+</table>
+
+<p>
+  프론트엔드(React)는 백엔드 Spring Boot 서버에 REST API로 요청을 보냅니다.
+  백엔드는 PostgreSQL(PostGIS)에서 반경 내 안전시설 수를 공간 쿼리로 조회하고,
+  T맵 API로부터 복수의 경로를 수신한 뒤 경로 구간별 안전점수를 계산해 프론트로 반환합니다.
+</p>
+
+<h3>3-2. 스토리보드 — 화면 이동 경로</h3>
+
+<h4>기능 흐름에 따른 화면 이동</h4>
+<div class="img-placeholder">[ 스토리보드 / 화면 흐름도 이미지 첨부 ]</div>
+
+<ol>
+  <li><b>메인 화면</b> — 지도 초기 표시, 현재 위치 자동 마커 표시</li>
+  <li><b>출발지/목적지 검색</b> — 검색창 입력 → 드롭다운 POI 목록 → 선택 시 마커 표시</li>
+  <li><b>경로 검색</b> — '경로 검색' 버튼 클릭 → T맵 API 호출 → 복수 경로 카드 표시</li>
+  <li><b>경로 선택</b> — 원하는 경로 카드 탭 → 지도에 해당 경로 오버레이 강조</li>
+  <li><b>시설 확인</b> — 시설 ON/OFF 토글 → CCTV/보안등/경찰 마커 지도에 표시</li>
+  <li><b>위험구역 알림</b> — 실시간 위치가 위험구역 진입 시 상단 배너 자동 표시</li>
+  <li><b>SOS</b> — 우하단 SOS 버튼 → 카운트다운 모달 → 즉시 신고 또는 취소</li>
+</ol>
+
+<h3>3-3. 화면 설계</h3>
+
+<h4>① 메인 지도 화면 (웹)</h4>
+<div class="img-placeholder">[ 웹 메인 화면 스크린샷 첨부 ]</div>
+<p>좌측 패널에 출발지/목적지 검색, 경로 검색 버튼, 경로 결과 카드, 시설 토글 버튼이 위치합니다. 우측 전체 영역이 Kakao 지도로 표시됩니다.</p>
+
+<h4>② 모바일 화면 (bottom sheet)</h4>
+<div class="img-placeholder">[ 모바일 화면 스크린샷 첨부 ]</div>
+<p>하단 bottom sheet 패널로 검색 UI를 제공하며, 손가락으로 드래그해 패널을 접거나 펼칠 수 있습니다. 경로 검색 후 결과 전용 뷰(80vh)로 전환되며, 상단 재검색 버튼으로 초기화됩니다.</p>
+
+<h4>③ 경로 결과 화면</h4>
+<div class="img-placeholder">[ 경로 결과 카드 스크린샷 첨부 ]</div>
+<p>각 경로 카드에 소요 시간, 거리, 안전등급(안전/주의/위험), 안전점수(0~100점)와 시각적 바(bar)가 표시됩니다. 추천 안전경로에는 초록색 '추천 안전경로' 배지가 부여됩니다.</p>
+
+<h4>④ 위험구역 알림 배너</h4>
+<div class="img-placeholder">[ 위험구역 알림 배너 스크린샷 첨부 ]</div>
+<p>현재 위치가 HIGH 위험구역에 진입하면 상단에 경고 배너가 슬라이드 다운되며, 6초 후 자동 닫히거나 X 버튼으로 수동 닫기 가능합니다. 동일 구역 30초 이내 중복 알림은 차단됩니다.</p>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>4. 데이터베이스 설계</h2>
+
+<h3>4-1. ERD</h3>
+<div class="img-placeholder">[ ERD 이미지 첨부 ]</div>
+
+<h3>4-2. 주요 테이블 명세</h3>
+
+<h4>safety_facilities (안전 시설)</h4>
+<table>
+  <tr><th>컬럼명</th><th>타입</th><th>설명</th></tr>
+  <tr><td>id</td><td>BIGINT (PK)</td><td>시설 고유 ID</td></tr>
+  <tr><td>facility_type</td><td>VARCHAR</td><td>시설 유형 (CCTV / SECURITY_LIGHT / POLICE)</td></tr>
+  <tr><td>name</td><td>VARCHAR</td><td>시설명</td></tr>
+  <tr><td>latitude</td><td>DOUBLE</td><td>위도</td></tr>
+  <tr><td>longitude</td><td>DOUBLE</td><td>경도</td></tr>
+  <tr><td>location</td><td>GEOMETRY(Point)</td><td>PostGIS 공간 인덱스 컬럼</td></tr>
+  <tr><td>address</td><td>VARCHAR</td><td>주소</td></tr>
+</table>
+
+<h4>danger_zones (위험구역)</h4>
+<table>
+  <tr><th>컬럼명</th><th>타입</th><th>설명</th></tr>
+  <tr><td>id</td><td>BIGINT (PK)</td><td>구역 고유 ID</td></tr>
+  <tr><td>name</td><td>VARCHAR</td><td>구역명</td></tr>
+  <tr><td>risk_level</td><td>VARCHAR</td><td>위험 등급 (HIGH / MEDIUM / LOW)</td></tr>
+  <tr><td>safety_score</td><td>DOUBLE</td><td>안전점수 (0~100)</td></tr>
+  <tr><td>bounds</td><td>JSONB</td><td>구역 경계 좌표 배열 [[lat,lng], ...]</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>5. 프로젝트 구현</h2>
+
+<h3>5-1. 개발 환경 및 도구</h3>
+<table>
+  <tr><th>구분</th><th>항목</th><th>버전/상세</th></tr>
+  <tr><td rowspan="4"><b>백엔드</b></td><td>언어</td><td>Java 25</td></tr>
+  <tr><td>프레임워크</td><td>Spring Boot 4.0.6</td></tr>
+  <tr><td>DB 접근</td><td>JdbcTemplate (JPA 미사용)</td></tr>
+  <tr><td>데이터베이스</td><td>PostgreSQL 18 + PostGIS</td></tr>
+  <tr><td rowspan="3"><b>프론트엔드</b></td><td>언어/프레임워크</td><td>React 18 (CRA)</td></tr>
+  <tr><td>지도 API</td><td>Kakao Maps JavaScript API</td></tr>
+  <tr><td>경로 API</td><td>T맵 Pedestrian Route API</td></tr>
+  <tr><td rowspan="4"><b>도구</b></td><td>버전 관리</td><td>Git / GitHub</td></tr>
+  <tr><td>IDE</td><td>IntelliJ IDEA, VS Code</td></tr>
+  <tr><td>HTTPS 테스트</td><td>ngrok (고정 도메인)</td></tr>
+  <tr><td>API 테스트</td><td>Postman</td></tr>
+</table>
+
+<h3>5-2. 구현 기능</h3>
+
+<h4>① 안전 경로 추천 (담당: 김령균)</h4>
+<p>
+  T맵 보행자 경로 API로 대로우선, 최단거리, 최소시간 등 복수 경로를 수신한 뒤,
+  각 경로의 Polyline 좌표에서 일정 간격으로 샘플 포인트를 추출합니다.
+  각 포인트의 반경 내 CCTV·보안등·경찰 시설 수를 PostGIS 공간 쿼리로 집계하고,
+  가중 평균으로 경로 전체 안전점수(0~100)를 산출합니다.
+  점수가 가장 높은 경로를 '추천 안전경로'로 표시합니다.
+</p>
+<div class="code-box">// 안전점수 계산 핵심 로직 (SafetyScoreService.java)
+double score = (cctvCount * 0.4 + lightCount * 0.4 + policeCount * 0.2)
+               / samplePoints.size() * NORMALIZE_FACTOR;
+return Math.min(100.0, score);</div>
+
+<h4>② 공공데이터 수집 (담당: 이동희)</h4>
+<p>
+  국가공공데이터포털 Open API를 통해 성남시 분당구 내 안전시설 데이터를 수집합니다.
+  수집된 데이터는 <code>safety_facilities</code> 테이블에 저장되며,
+  PostGIS <code>GEOMETRY(Point)</code> 컬럼에 공간 인덱스를 적용해 반경 쿼리 성능을 확보합니다.
+</p>
+<table>
+  <tr><th>데이터 종류</th><th>수집 건수</th><th>출처</th></tr>
+  <tr><td>생활안전 CCTV</td><td>약 10,000건</td><td>성남시 공공데이터</td></tr>
+  <tr><td>조도측정 보안등</td><td>약 13,000건</td><td>성남시 공공데이터</td></tr>
+  <tr><td>경찰/치안 시설</td><td>35건</td><td>공공데이터포털</td></tr>
+</table>
+
+<h4>③ 모바일 반응형 UI (담당: 이시우)</h4>
+<p>
+  768px 이하 화면에서 좌측 패널이 화면 하단에서 올라오는 bottom sheet 형태로 전환됩니다.
+  패널 상단 핸들을 드래그해 패널을 접거나 펼칠 수 있으며, 드래그 중 지도가 함께 움직이는
+  현상은 non-passive touchmove 이벤트 리스너의 <code>preventDefault()</code>로 차단했습니다.
+</p>
+<div class="code-box">// 지도 이동 차단 — passive: false로 등록
+handle.addEventListener('touchmove', (e) => {
+  if (dragStartY.current === null) return;
+  e.preventDefault(); // Kakao Maps 터치 이벤트 차단
+  const delta = e.touches[0].clientY - dragStartY.current;
+  panelRef.current.style.maxHeight = `${newHeight}px`;
+}, { passive: false });</div>
+
+<h4>④ 실시간 위치 추적 (담당: 이동희)</h4>
+<p>
+  <code>navigator.geolocation.watchPosition()</code>으로 사용자의 위치를 실시간 감지하고,
+  Kakao Maps CustomOverlay로 파란 점 마커를 현재 위치에 표시합니다.
+  Geolocation API는 HTTPS 환경에서만 동작하므로 ngrok 고정 도메인으로 모바일 테스트를 진행했습니다.
+</p>
+
+<h4>⑤ 위험구역 진입 알림 (담당: 이동희)</h4>
+<p>
+  서버에서 HIGH 등급 위험구역 좌표를 앱 초기 로드 시 수신해두고,
+  위치 업데이트마다 현재 좌표가 위험구역 경계 내에 있는지 확인합니다.
+  진입이 감지되면 상단에 경고 배너를 표시하며, 동일 구역 30초 이내 중복 알림은 억제합니다.
+</p>
+
+<h4>⑥ 시설 마커 표시 (담당: 이시우)</h4>
+<p>
+  사용자가 지도를 이동하거나 줌을 변경할 때마다(500ms 디바운스) 현재 뷰포트 경계를 서버에 전달합니다.
+  줌 레벨 5 이하(충분히 확대)일 때만 마커를 표시하며, CCTV는 파란색, 보안등은 노란색, 경찰/치안은 빨간색 원형 마커로 구분합니다.
+</p>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>6. AI 활용 기능</h2>
+<p>
+  본 프로젝트에서는 개발 과정에서 Claude Code(Anthropic)를 활용했습니다.
+</p>
+<ul>
+  <li>백엔드 JPA → JdbcTemplate 전환 시 마이그레이션 코드 검토 및 쿼리 최적화</li>
+  <li>PostGIS 공간 쿼리(ST_DWithin) 작성 지원</li>
+  <li>안전점수 알고리즘 로직 검토 및 개선 방향 제안</li>
+  <li>React 컴포넌트 구조 설계 및 모바일 반응형 CSS 작성</li>
+  <li>비동기 처리(watchPosition, 디바운스) 관련 코드 디버깅</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>7. 2학기 진행 계획 (신구EXPO 확장)</h2>
+<ul>
+  <li><b>배포 고도화</b> — AWS EC2 백엔드 + 프론트 정식 도메인 배포, SSL 인증서 적용</li>
+  <li><b>데이터 확장</b> — 성남시 전체(수정구·중원구 포함)로 안전시설 데이터 범위 확대</li>
+  <li><b>AI 위험도 예측</b> — 시간대·요일별 위험 통계를 학습해 동적 안전점수 산출</li>
+  <li><b>사용자 신고 기능</b> — SOS 버튼과 연동한 실시간 위험 신고 및 커뮤니티 위험 제보</li>
+  <li><b>경로 즐겨찾기</b> — 자주 사용하는 안전 경로 저장 및 빠른 재사용 기능</li>
+  <li><b>네이티브 앱 전환</b> — React Native 또는 Flutter로 iOS/Android 앱 출시 검토</li>
+</ul>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>8. 결과 및 고찰</h2>
+
+<h3>8-1. 프로젝트 소감 및 느낀 점</h3>
+
+<h4>김령균 (조장)</h4>
+<p>
+  공간 데이터베이스(PostGIS)를 처음 사용해보며 일반 RDB와 다른 공간 쿼리의 개념을 익혔습니다.
+  안전점수 가중치 설계 시 CCTV, 보안등, 경찰 시설의 실질적 안전 기여도를 어떻게 수치화할지
+  고민하는 과정이 흥미로웠습니다. 팀 프로젝트에서 조장으로서 일정 관리의 중요성을 체감했습니다.
+</p>
+
+<h4>이동희</h4>
+<p>
+  JPA를 제거하고 JdbcTemplate으로 전환하는 작업을 통해 SQL을 직접 다루며 데이터베이스를
+  더 깊이 이해할 수 있었습니다. 모바일 위치 권한을 위해 HTTPS 환경을 구축하는 과정에서
+  웹 보안 정책(Mixed Content, Geolocation 제약)에 대해 실질적으로 배웠습니다.
+</p>
+
+<h4>이시우</h4>
+<p>
+  Kakao Maps API와 React를 결합하는 작업이 초반에 낯설었지만, 컴포넌트 분리와 훅(hook)
+  패턴을 적용하면서 구조가 잡혔습니다. 모바일 터치 이벤트가 브라우저의 기본 스크롤과
+  충돌하는 문제를 passive 이벤트 리스너 개념으로 해결하며 웹 이벤트 시스템을 깊이 이해했습니다.
+</p>
+
+<h3>8-2. 어려웠던 점 및 극복 사례</h3>
+<table>
+  <tr><th>어려움</th><th>극복 방법</th></tr>
+  <tr>
+    <td>JPA + Hibernate Spatial이 PostGIS와 충돌하여 서버 기동 불가</td>
+    <td>JPA 전체 제거 후 JdbcTemplate + 순수 SQL로 전환, 의존성 단순화</td>
+  </tr>
+  <tr>
+    <td>모바일 브라우저에서 Geolocation API 사용 불가 (HTTP 차단)</td>
+    <td>ngrok 고정 도메인으로 HTTPS 터널 구축하여 위치 권한 획득</td>
+  </tr>
+  <tr>
+    <td>패널 드래그 시 지도도 함께 이동하는 버그</td>
+    <td>React 기본 이벤트(passive)를 우회해 DOM addEventListener에 <code>{ passive: false }</code>로 직접 등록, preventDefault() 적용</td>
+  </tr>
+  <tr>
+    <td>경찰/치안 시설 안전점수 반영 안 됨 (항상 0건 집계)</td>
+    <td>DB 실제 저장값('POLICE')과 코드 쿼리값('POLICE_BOX', 'DISTRICT_POLICE') 불일치 발견 후 통일</td>
+  </tr>
+  <tr>
+    <td>공공데이터 API 키 미확보로 일부 데이터 수집 불가</td>
+    <td>수집 가능한 키에 집중하고, 미확보 키는 기동 실패 방지를 위해 기본값(:) 처리</td>
+  </tr>
+</table>
+
+<hr class="section-divider">
+
+<!-- ────────────────────────────────────────── -->
+<h2>9. 참고자료</h2>
+<ul>
+  <li>국가공공데이터포털 — <span class="tag">data.go.kr</span> (CCTV, 보안등, 경찰 데이터)</li>
+  <li>성남시 공공데이터 — <span class="tag">data.seongnam.go.kr</span></li>
+  <li>T맵 API 개발자 센터 — <span class="tag">tmap.skplanetx.com</span> (보행자 경로 API)</li>
+  <li>Kakao Maps API 문서 — <span class="tag">apis.map.kakao.com</span></li>
+  <li>PostGIS 공식 문서 — <span class="tag">postgis.net/docs</span> (ST_DWithin, GEOMETRY 타입)</li>
+  <li>Spring Boot 공식 문서 — <span class="tag">spring.io/projects/spring-boot</span></li>
+  <li>MDN Web Docs — <span class="tag">developer.mozilla.org</span> (Geolocation API, Touch Events, EventListener passive)</li>
+  <li>AI 개발 보조 — Claude Code (Anthropic)</li>
+</ul>
+
+<hr class="section-divider">
+<p style="text-align:center; color:#888; font-size:9.5pt; margin-top:30px;">
+  김이상궁 조 &nbsp;|&nbsp; 조장: 김령균 &nbsp;|&nbsp; 팀원: 이동희, 이시우 &nbsp;|&nbsp; 2026년 06월
+</p>
+
+</body>
+</html>

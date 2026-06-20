@@ -21,7 +21,7 @@ public class DangerZoneService {
     private static final double MIN_LAT = 37.33;
     private static final double MAX_LAT = 37.52;
     private static final double MIN_LNG = 127.04;
-    private static final double MAX_LNG = 127.16;
+    private static final double MAX_LNG = 127.18;
 
     private static final double GRID_LAT = 0.0027;
     private static final double GRID_LNG = 0.0034;
