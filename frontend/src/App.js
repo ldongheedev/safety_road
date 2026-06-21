@@ -257,7 +257,7 @@ export default function App() {
       {/* 현재 위치로 이동 버튼 */}
       <button
         className={`btn-my-location${!currentLocation ? ' btn-my-location--inactive' : ''}`}
-        style={{ bottom: resultsMode ? 'calc(80vh + 12px)' : undefined }}
+        style={{ bottom: (isMobile && resultsMode) ? 'calc(80vh + 12px)' : undefined }}
         onClick={handleCenterOnMe}
         title={locationError ? '위치 권한이 필요합니다' : currentLocation ? '내 위치로' : '위치 확인 중...'}
       >

@@ -21,7 +21,7 @@ public class TmapClient {
     private final String tmapAppKey;
 
     private static final Map<Integer, String> SEARCH_OPTIONS = Map.of(
-            0, "추천",
+            0, "일반",
             4, "대로우선",
             10, "최단"
     );
