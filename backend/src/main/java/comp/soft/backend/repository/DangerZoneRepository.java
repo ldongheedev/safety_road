@@ -43,10 +43,6 @@ public class DangerZoneRepository {
         return jdbcTemplate.query(SELECT_BOUNDS, rowMapper);
     }
 
-    public List<DangerZone> findByRiskLevel(String riskLevel) {
-        return jdbcTemplate.query(SELECT_BOUNDS + "WHERE risk_level = ?", rowMapper, riskLevel);
-    }
-
     public List<DangerZone> findByPoint(double lat, double lng) {
         return jdbcTemplate.query(
                 SELECT_BOUNDS + "WHERE ST_Intersects(grid_polygon, ST_SetSRID(ST_Point(?, ?), 4326))",

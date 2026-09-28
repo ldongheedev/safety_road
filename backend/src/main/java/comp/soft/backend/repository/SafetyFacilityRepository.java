@@ -39,21 +39,11 @@ public class SafetyFacilityRepository {
             "ST_Y(location) AS latitude, ST_X(location) AS longitude " +
             "FROM safety_facility ";
 
-    public List<SafetyFacility> findByFacilityType(String facilityType) {
-        return jdbcTemplate.query(SELECT_COORDS + "WHERE facility_type = ?", rowMapper, facilityType);
-    }
-
     @Transactional
     public void deleteByFacilityTypeAndDataSource(String facilityType, String dataSource) {
         jdbcTemplate.update(
                 "DELETE FROM safety_facility WHERE facility_type = ? AND data_source = ?",
                 facilityType, dataSource);
-    }
-
-    public List<SafetyFacility> findWithinRadius(double lat, double lng, double radius) {
-        return jdbcTemplate.query(
-                SELECT_COORDS + "WHERE ST_DWithin(location, ST_SetSRID(ST_Point(?, ?), 4326), ?)",
-                rowMapper, lng, lat, radius);
     }
 
     public int countWithinRadius(double lat, double lng, double radius) {

@@ -24,6 +24,8 @@ ngrok.exe
 TEAM_BRIEFING.md
 *보고서*.md
 *.pdf
+*.pptx
+김이상궁대본.txt
 frontend/.env
 frontend/.env.*
 !frontend/.env.example
